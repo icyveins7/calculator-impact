@@ -18,6 +18,10 @@ class Flower(Artifact):
                          atkraw=atkraw, atkperc=atkperc,
                          hpperc=hpperc, critrate=critrate, critdmg=critdmg,
                          em=em, er=er, defraw=defraw, defperc=defperc)
+        
+    def print(self):
+        print("Flower")
+        super().print()
 
 #%%
 class Feather(Artifact):
@@ -30,6 +34,9 @@ class Feather(Artifact):
                          atkperc=atkperc, hpraw=hpraw,
                          hpperc=hpperc, critrate=critrate, critdmg=critdmg,
                          em=em, er=er, defraw=defraw, defperc=defperc)
+    def print(self):
+        print("Feather")
+        super().print()
         
 #%%
 class Timepiece(Artifact):
@@ -44,6 +51,10 @@ class Timepiece(Artifact):
                          atkraw=atkraw, atkperc=atkperc, hpraw=hpraw,
                          hpperc=hpperc, critrate=critrate, critdmg=critdmg,
                          em=em, er=er, defraw=defraw, defperc=defperc)
+    
+    def print(self):
+        print("Timepiece")
+        super().print()
         
 #%%
 class Goblet(Artifact):
@@ -61,6 +72,10 @@ class Goblet(Artifact):
                          hpperc=hpperc, critrate=critrate, critdmg=critdmg,
                          em=em, er=er, defraw=defraw, defperc=defperc)
         
+    def print(self):
+        print("Goblet")
+        super().print()
+        
 #%%
 class Headpiece(Artifact):
     def __init__(self, lv, mainhpperc=None, mainatkperc=None, maindefperc=None,
@@ -74,6 +89,10 @@ class Headpiece(Artifact):
                          atkraw=atkraw, atkperc=atkperc, hpraw=hpraw,
                          hpperc=hpperc, critrate=critrate, critdmg=critdmg,
                          em=em, er=er, defraw=defraw, defperc=defperc)
+        
+    def print(self):
+        print("Headpiece")
+        super().print()
         
 #%% Unit test
 if __name__ == "__main__":

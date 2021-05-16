@@ -127,3 +127,4 @@ class Artifact:
         if self.defperc is not None:
             print("DEF+%.1f%%" % self.defperc)
             
+            
