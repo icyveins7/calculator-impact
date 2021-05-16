@@ -1,0 +1,50 @@
+Working Dir prep:
+1) Go to https://sourceforge.net/projects/vietocr/files/jTessBoxEditor/ and download jTessBoxEditor-2.3.1.zip
+2) Unzip the folder within your working directory
+3) Create a new folder 'xxx_training_data' within your working directory and enter this folder.
+
+Prep font to be trained
+4) Download a .ttf (TrueType Font) file of your desired font
+5) Convert it online to a png file (xxx.png)
+
+Read in font
+6) Enter the unzipped jtessboxeditor folder. There should be a batch file (windows) called train.bat. Double click.
+7) Under 'Tools' in the toolbar above, click Merge TIFF
+8) Select xxx.png file created in step 5
+9) Another dialog box will appear. Input xxx.font.exp0.tiff and save
+
+Create bounding boxes
+10) Open a Windows terminal
+11) Use tesseract to label the font using the following command:
+	tesseract --oem 0 xxx.font.exp0.tif xxx.font.exp0 makebox
+12) a .box file should be created in the same folder as your .tif file.
+
+Edit bounding boxes and labels
+13) Open jtessboxeditor again and click Box Editor tab
+14) Click Open and select your .tif file
+15) The .tif file should appear with the corresponding bounding boxes surrounding each character
+16) use the X,Y,W and H to adjust bounding boxes and edit the labels on the left column
+17) if your .tif file has multiple pages, remember to save before editing the next page
+18) save the file when completed
+19) create a txt file called font_properties and remove the extension. In this file, the contents are:
+font 0 0 0 0 0
+20) After this step, in xxx_training_data you should have:
+- xxx.png
+- xxx.font.exp0.tif
+- xxx.font.exp0.box
+- font_properties (as a FILE, not as a TXT document)
+
+Training
+19) Open jtessboxeditor and click Trainer tab
+20) Ensure that the tesseract executables point to the tesseract.exe within tesseract-ocr in jtessboxeditor files that were unzipped, and NOT YOUR OWN TESSERACT EXECUTABLES
+21) Select your .tif file as input in training data
+22) Input a name for your new font as xxx (ensure that this name does not coincide with any current .trainingdata files in your tessdata folder. This can be checked in your tesseract installation location)
+23) ignore bootstrap language and RTL.
+24) Select 'Train with Existing Box' in the dropdown menu
+25) Run and Validate
+
+Saving new model
+26) A bunch of random files and a folder titled tessdata would be created after the training process
+27) Copy xxx.trainingdata file within tessdata to the tessdata folder of your tesseract installation location
+28) Ensure it is working on a testing image by entering the following command into a Windows terminal:
+	tesseract testing_image.png testing_image_out -l xxx
