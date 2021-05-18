@@ -7,13 +7,13 @@ Created on Mon May 17 01:43:45 2021
 
 from PIL import Image
 import os
+import numpy as np
+from skimage.feature import match_template
 
-def crop(directory,filename):
+
+def crop(directory,filename,ratio_left,ratio_top,ratio_bottom):
     im = Image.open(filename)
     width, height = im.size
-    ratio_left = 0.75
-    ratio_top = 0.15
-    ratio_bottom = 0.55
     
     left = ratio_left*width
     right = width
@@ -26,3 +26,17 @@ def crop(directory,filename):
     im1.save(filename)
     os.chdir('..')
     return 0
+
+def mse(imageA, imageB):
+    err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
+    err /= float(imageA.shape[0] * imageA.shape[1])
+    return err
+
+def check_lock_button(lockbutton,image):
+    result = match_template(image,lockbutton)
+    ij = np.unravel_index(np.argmax(result), result.shape)
+    x, y = ij[::-1]
+    height, width = lockbutton.shape    
+    identified_img = image[y:y+height,x:x+width]
+    m = mse(lockbutton,identified_img)
+    return m,x,y
