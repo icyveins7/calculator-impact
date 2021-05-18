@@ -6,18 +6,16 @@ Created on Sun May 16 18:17:52 2021
 """
 
 from artifact import Artifact
+import numpy as np
 
 #%%
 class Flower(Artifact):
-    def __init__(self, lv, mainhpraw,
-                 atkraw=None, atkperc=None, hpperc=None,
-                 critrate=None, critdmg=None, em=None, er=None,
-                 defraw=None, defperc=None):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
         
-        super().__init__(lv=lv, mainhpraw=mainhpraw,
-                         atkraw=atkraw, atkperc=atkperc,
-                         hpperc=hpperc, critrate=critrate, critdmg=critdmg,
-                         em=em, er=er, defraw=defraw, defperc=defperc)
+        # Check the main stat is HP
+        if self.mainhpraw is None:
+            raise ValueError("Flower main stat must be HP.")
         
     def print(self):
         print("Flower")
@@ -25,32 +23,28 @@ class Flower(Artifact):
 
 #%%
 class Feather(Artifact):
-    def __init__(self, lv, mainatkraw,
-                 atkperc=None, hpraw=None, hpperc=None,
-                 critrate=None, critdmg=None, em=None, er=None,
-                 defraw=None, defperc=None):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
         
-        super().__init__(lv=lv, mainatkraw=mainatkraw,
-                         atkperc=atkperc, hpraw=hpraw,
-                         hpperc=hpperc, critrate=critrate, critdmg=critdmg,
-                         em=em, er=er, defraw=defraw, defperc=defperc)
+        # Check the main stat is ATK
+        if self.mainatkraw is None:
+            raise ValueError("Feather main stat must be ATK.")
+        
     def print(self):
         print("Feather")
         super().print()
         
 #%%
 class Timepiece(Artifact):
-    def __init__(self, lv, mainhpperc=None, mainatkperc=None, maindefperc=None,
-                 mainer=None, mainem=None,
-                 atkraw=None, atkperc=None, hpraw=None, hpperc=None,
-                 critrate=None, critdmg=None, em=None, er=None,
-                 defraw=None, defperc=None):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
         
-        super().__init__(lv=lv, mainhpperc=mainhpperc, mainatkperc=mainatkperc, maindefperc=maindefperc,
-                         mainer=mainer, mainem=mainem,
-                         atkraw=atkraw, atkperc=atkperc, hpraw=hpraw,
-                         hpperc=hpperc, critrate=critrate, critdmg=critdmg,
-                         em=em, er=er, defraw=defraw, defperc=defperc)
+        # Check main stats allowed
+        allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
+                                 self.mainem, self.mainer])
+        if np.all(allowedMains==None):
+            raise ValueError("Main stat must be HP%/ATK%/DEF%/ER/EM.")
+        
     
     def print(self):
         print("Timepiece")
@@ -58,19 +52,15 @@ class Timepiece(Artifact):
         
 #%%
 class Goblet(Artifact):
-    def __init__(self, lv, mainhpperc=None, mainatkperc=None, maindefperc=None,
-                 mainem=None, maincryo=None, mainanemo=None, maingeo=None,
-                 mainpyro=None, mainhydro=None, mainelec=None, mainphys=None,
-                 atkraw=None, atkperc=None, hpraw=None, hpperc=None,
-                 critrate=None, critdmg=None, em=None, er=None,
-                 defraw=None, defperc=None):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
         
-        super().__init__(lv=lv, mainhpperc=mainhpperc, mainatkperc=mainatkperc, maindefperc=maindefperc,
-                         mainem=mainem, maincryo=maincryo, mainanemo=mainanemo, maingeo=maingeo,
-                         mainpyro=mainpyro, mainhydro=mainhydro, mainelec=mainelec, mainphys=mainphys,
-                         atkraw=atkraw, atkperc=atkperc, hpraw=hpraw,
-                         hpperc=hpperc, critrate=critrate, critdmg=critdmg,
-                         em=em, er=er, defraw=defraw, defperc=defperc)
+        # Check main stats allowed
+        allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
+                                 self.mainem, self.maincryo, self.mainanemo, self.maingeo,
+                                 self.mainpyro, self.mainhydro, self.mainelec, self.mainphys])
+        if np.all(allowedMains==None):
+            raise ValueError("Main stat must be HP%/ATK%/DEF%/EM/ELE DMG%/PHYS DMG%.")
         
     def print(self):
         print("Goblet")
@@ -78,17 +68,15 @@ class Goblet(Artifact):
         
 #%%
 class Headpiece(Artifact):
-    def __init__(self, lv, mainhpperc=None, mainatkperc=None, maindefperc=None,
-                 mainem=None, maincritrate=None, maincritdmg=None, mainhealing=None,
-                 atkraw=None, atkperc=None, hpraw=None, hpperc=None,
-                 critrate=None, critdmg=None, em=None, er=None,
-                 defraw=None, defperc=None):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
         
-        super().__init__(lv=lv, mainhpperc=mainhpperc, mainatkperc=mainatkperc, maindefperc=maindefperc,
-                         mainem=mainem, maincritrate=maincritrate, maincritdmg=maincritdmg, mainhealing=mainhealing,
-                         atkraw=atkraw, atkperc=atkperc, hpraw=hpraw,
-                         hpperc=hpperc, critrate=critrate, critdmg=critdmg,
-                         em=em, er=er, defraw=defraw, defperc=defperc)
+        # Check main stats allowed
+        allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
+                                 self.mainem, self.maincritrate, self.maincritdmg, self.mainhealing])
+        if np.all(allowedMains==None):
+            raise ValueError("Main stat must be HP%/ATK%/DEF%/CRIT Rate/CRIT DMG/Healing Bonus.")
+        
         
     def print(self):
         print("Headpiece")
@@ -96,8 +84,45 @@ class Headpiece(Artifact):
         
 #%% Unit test
 if __name__ == "__main__":
-    feather = Feather(20, 123, atkperc=20.0, critrate=20.0, critdmg=20.0, er=100)
-    goblet = Goblet(20, maincryo=46.0, atkperc=20.0, critrate=10.0, critdmg=12.0, em=50)
+    # Test direct ctor
+    feather = Feather(mainatkraw=123, atkperc=20.0, critrate=20.0, critdmg=20.0, er=100)
+    goblet = Goblet(maincryo=46.0, atkperc=20.0, critrate=10.0, critdmg=12.0, em=50)
     
     feather.print()
     goblet.print()
+    
+    # Test dictionary ctor
+    d = {'maincritdmg': 25.0, 'atkperc': 11.0, 'critrate': 12.0, 'em': 13, 'atkraw': 10}
+    head = Headpiece.fromDictionary(d)
+    head.print()
+    
+    # Test failures
+    try:
+        invalidflower = Flower(mainatkraw=10)
+    except Exception as e:
+        print(e)   
+        
+    try:
+        invalidfeather = Feather(maincryo=10.0)
+    except Exception as e:
+        print(e)
+        
+    try:
+        invalidTimepiece = Timepiece(mainer=10.0, mainem=10)
+    except Exception as e:
+        print(e)   
+        
+    try:
+        invalidTimepiece = Timepiece(maincritdmg=10.0)
+    except Exception as e:
+        print(e)   
+        
+    try:
+        invalidGoblet = Goblet(mainhealing=10.0)
+    except Exception as e:
+        print(e)  
+        
+    try:
+        invalidHead = Headpiece(maincryo=10.0)
+    except Exception as e:
+        print(e) 
