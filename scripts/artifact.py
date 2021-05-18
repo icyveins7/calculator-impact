@@ -6,7 +6,7 @@ Created on Sun May 16 17:39:27 2021
 """
 
 class Artifact:
-    def __init__(self, lv=0,
+    def __init__(self,
                  mainhpraw=None, mainatkraw=None, mainhpperc=None, mainatkperc=None,
                  maindefperc=None, mainer=None, mainem=None,
                  maincritrate=None, maincritdmg=None, mainhealing=None,
@@ -15,9 +15,6 @@ class Artifact:
                  atkraw=None, atkperc=None, hpraw=None, hpperc=None,
                  critrate=None, critdmg=None, em=None, er=None,
                  defraw=None, defperc=None):
-        
-        # Pure attachments
-        self.lv = lv
         
         # Main stats which may clash
         self.mainhpraw = mainhpraw
@@ -95,6 +92,52 @@ class Artifact:
             raise ValueError("Cannot have both main/sub stats as CRIT Rate%.")
         if self.maincritdmg is not None and self.critdmg is not None:
             raise ValueError("Cannot have both main/sub stats as CRIT DMG%.")
+
+    @classmethod
+    def fromDictionary(cls, d):
+        # Unpack dictionary for each stat if it exists
+        mainhpraw = d['mainhpraw'] if 'mainhpraw' in d.keys() else None
+        mainatkraw = d['mainatkraw'] if 'mainatkraw' in d.keys() else None
+        mainhpperc = d['mainhpperc'] if 'mainhpperc' in d.keys() else None
+        mainatkperc = d['mainatkperc'] if 'mainatkperc' in d.keys() else None
+        maindefperc = d['maindefperc'] if 'maindefperc' in d.keys() else None
+        mainer = d['mainer'] if 'mainer' in d.keys() else None
+        mainem = d['mainem'] if 'mainem' in d.keys() else None
+        maincritrate = d['maincritrate'] if 'maincritrate' in d.keys() else None
+        maincritdmg = d['maincritdmg'] if 'maincritdmg' in d.keys() else None
+        
+        mainhealing = d['mainhealing'] if 'mainhealing' in d.keys() else None
+        maincryo = d['maincryo'] if 'maincryo' in d.keys() else None
+        mainanemo = d['mainanemo'] if 'mainanemo' in d.keys() else None
+        maingeo = d['maingeo'] if 'maingeo' in d.keys() else None
+        mainpyro = d['mainpyro'] if 'mainpyro' in d.keys() else None
+        mainhydro = d['mainhydro'] if 'mainhydro' in d.keys() else None
+        mainelec = d['mainelec'] if 'mainelec' in d.keys() else None
+        mainphys = d['mainphys'] if 'mainphys' in d.keys() else None
+        
+        atkraw = d['atkraw'] if 'atkraw' in d.keys() else None
+        atkperc = d['atkperc'] if 'atkperc' in d.keys() else None
+        hpraw = d['hpraw'] if 'hpraw' in d.keys() else None
+        hpperc = d['hpperc'] if 'hpperc' in d.keys() else None
+        critrate = d['critrate'] if 'critrate' in d.keys() else None
+        critdmg = d['critdmg'] if 'critdmg' in d.keys() else None
+        em = d['em'] if 'em' in d.keys() else None
+        er = d['er'] if 'er' in d.keys() else None
+        defraw = d['defraw'] if 'defraw' in d.keys() else None
+        defperc = d['defperc'] if 'defperc' in d.keys() else None
+        
+        # note, it is important to leave this as positional keywords i.e.
+        # do not simply leave each arg as XX, but rather XX=XX. this maintains
+        # the classmethod for the derived classes as they use keyword forwarding
+        return cls(mainhpraw=mainhpraw, mainatkraw=mainatkraw, mainhpperc=mainhpperc, mainatkperc=mainatkperc,
+                    maindefperc=maindefperc, mainer=mainer, mainem=mainem,
+                    maincritrate=maincritrate, maincritdmg=maincritdmg, mainhealing=mainhealing,
+                    maincryo=maincryo, mainanemo=mainanemo, maingeo=maingeo,
+                    mainpyro=mainpyro, mainhydro=mainhydro, mainelec=mainelec, mainphys=mainphys,
+                    atkraw=atkraw, atkperc=atkperc, hpraw=hpraw, hpperc=hpperc,
+                    critrate=critrate, critdmg=critdmg, em=em, er=er,
+                    defraw=defraw, defperc=defperc)
+        
 
     def print(self):
         idx = [i for i, val in enumerate(self.mainstatlist) if val != None][0]
