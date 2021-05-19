@@ -4,23 +4,11 @@ Created on Mon May 17 01:47:49 2021
 
 @author: sandra
 """
-
-from PIL import Image
-import skimage
-from skimage import filters, io
+from skimage import io
 from skimage.color import rgb2gray
-from skimage.color.adapt_rgb import adapt_rgb, each_channel, hsv_value
-from skimage.exposure import rescale_intensity
-from skimage.util import invert
-from skimage.transform import resize
-from skimage import morphology
-from skimage.feature import match_template
-
-
-from cropping import crop, mse, check_lock_button
+from calcutils import crop, check_mse, lock_button_init, crop_ref_lock, baby_image_proc
 import os
 import pytesseract
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -43,50 +31,28 @@ for img in dir_imgs:
 
 os.chdir(save_folder)
 
-#%%identify main and substats and save in folders for each figure
+#%%identify lockbutton and referencepoint
 
-image = rgb2gray(io.imread(r'10.png'))
+image = io.imread(r'46.png')
 
-m1,x1,y1=check_lock_button(lockbutton1,image)
-m2,x2,y2=check_lock_button(lockbutton2,image)
+gray_image = rgb2gray(image)
 
-lockbutton1_prop = {'error':m1,'x':x1,'y':y1,'data':lockbutton1}
-lockbutton2_prop = {'error':m2,'x':x2,'y':y2,'data':lockbutton2}
+lockbutton1_prop,lockbutton2_prop = lock_button_init(lockbutton1,lockbutton2,gray_image)
 
-def check(m1,m2):
-    if m1 < m2:
-        lockbutton_ref = lockbutton1_prop
-    else:
-        lockbutton_ref = lockbutton2_prop
-    return lockbutton_ref
-
-lockbutton_ref = check(m1,m2)
+lockbutton_ref = check_mse(lockbutton1_prop['error'],lockbutton2_prop['error'],lockbutton1_prop,lockbutton2_prop)
 height,width = lockbutton_ref['data'].shape
-template = image[lockbutton_ref['y']:lockbutton_ref['y']+height,lockbutton_ref['x']:lockbutton_ref['x']+width]
-mainstat = image[lockbutton_ref['y']+50:lockbutton_ref['y']+110,lockbutton_ref['x']-400:lockbutton_ref['x']+width+10]
 
-plt.imshow(mainstat,plt.cm.gray)
+mainstat = crop_ref_lock(image,lockbutton_ref['y'],50,135,lockbutton_ref['x'],-400,-135)
+mainstat_value = crop_ref_lock(image,lockbutton_ref['y'],50,135,lockbutton_ref['x'],-100,width+10)
 
+mainstat = baby_image_proc(mainstat)
+mainstat_value = baby_image_proc(mainstat_value)
 
-#%%image processing
-grayscale = mainstat
+custom_config = r'--oem 0 -l eng'
+main_stat_result = pytesseract.image_to_string(mainstat,config=custom_config)
+main_stat_val_result = pytesseract.image_to_string(mainstat_value,config=custom_config)
 
-thresh = filters.threshold_sauvola(grayscale,window_size=53)
-binary = grayscale < thresh
+result = main_stat_result.strip()+' '+main_stat_val_result.strip()
+print(result)
 
-selem = morphology.disk(1)
-res = morphology.black_tophat(binary,selem)
-
-post_tophat = binary ^ res
-
-plt.imshow((post_tophat),plt.cm.gray)
-
-#%%
-final_image = Image.fromarray((mainstat).astype('uint8'))
-custom_config = r'--oem 0 --psm 6 -l gs'
-result = pytesseract.image_to_string(final_image,config=custom_config)
-print(result.strip())
-
-plt.imshow(mainstat,plt.cm.gray)
-
-#type, main, substats
+#type, mainstat, substats, level, set
