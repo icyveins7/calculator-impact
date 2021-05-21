@@ -10,7 +10,7 @@ from PIL import Image
 from PIL import ImageFilter
 import numpy as np
 
-im = Image.open("../imgs/main_geodmg_oneline.png")
+im = Image.open("../imgs/main_hp_oneline.png")
 im = im.convert("RGB")
 otxt = tes.image_to_string(im, lang='eng', config='--oem 0')
 print(otxt.strip())
@@ -43,13 +43,13 @@ for rgb in range(3):
     # paste the processed band back, but only where colour was < X
     source[rgb].paste(out, None, blackmask)
     
-    # whitemask = source[rgb].point(lambda i: i >= threshold and 255)
+    whitemask = source[rgb].point(lambda i: i >= threshold and 255)
     
-    # # process the band to be black
-    # out = source[rgb].point(lambda i: 255)
+    # process the band to be black
+    out = source[rgb].point(lambda i: 255)
     
-    # # paste the processed band back, but only where colour was < X
-    # source[rgb].paste(out, None, whitemask)
+    # paste the processed band back, but only where colour was < X
+    source[rgb].paste(out, None, whitemask)
     
 
 # build a new multiband image
