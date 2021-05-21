@@ -9,6 +9,7 @@ from PIL import Image
 import os
 import numpy as np
 from skimage.feature import match_template
+import pytesseract
 
 def crop(directory,filename,ratio_left,ratio_top,ratio_bottom):
     im = Image.open(filename)
@@ -80,3 +81,14 @@ def baby_image_proc(image_array):
     
     newim = Image.merge(im.mode, source)
     return newim
+
+def ocr_mainstat(img):
+    img = baby_image_proc(img)
+    custom_config = r'--oem 0 -l gs'
+    result = pytesseract.image_to_string(img,config=custom_config)
+    return result
+
+def ocr_substat(img):
+    custom_config = r'--oem 0 --psm 13 -l gs'
+    result = pytesseract.image_to_string(img,config=custom_config)
+    return result
