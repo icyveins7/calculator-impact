@@ -10,6 +10,8 @@ import os
 import numpy as np
 from skimage.feature import match_template
 import pytesseract
+from difflib import SequenceMatcher
+from skimage.color import rgb2gray
 
 def crop(directory,filename,ratio_left,ratio_top,ratio_bottom):
     im = Image.open(filename)
@@ -84,7 +86,7 @@ def baby_image_proc(image_array):
 
 def ocr_mainstat(img):
     img = baby_image_proc(img)
-    custom_config = r'--oem 0 -l gs'
+    custom_config = r'--oem 0 -l eng'
     result = pytesseract.image_to_string(img,config=custom_config)
     return result
 
@@ -92,3 +94,21 @@ def ocr_substat(img):
     custom_config = r'--oem 0 --psm 13 -l gs'
     result = pytesseract.image_to_string(img,config=custom_config)
     return result
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
+
+def check_stat(stat,strlist):
+    values = []
+    for i in strlist:
+        values.append(similar(stat,i.upper()))
+    
+    max_val = max(values)
+    index = values.index(max_val)
+    return strlist[index]
+
+def split_substats(substat,plusbutton):
+    m_substat,x_substat,y_substat = check_lock_button(plusbutton,rgb2gray(substat))
+    substat_label = crop_ref_lock(substat,y_substat,-y_substat,45,x_substat,-x_substat,0)
+    substat_value = crop_ref_lock(substat,y_substat,-y_substat,45,x_substat,plusbutton.shape[1],substat.shape[1]-x_substat)
+    return(substat_label,substat_value)
