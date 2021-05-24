@@ -4,21 +4,14 @@ Created on Sat May 22 00:40:39 2021
 
 @author: sandra
 """
+from calcutils import check_stat
+from workflow import read_image_to_artifact
+from artifact_slots import *
+import re
 
-from difflib import SequenceMatcher
+#%%separating stat names
 
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
-
-results = {'mainstat':'ATK',
-                'mainstat_val':'43%',
-                'level':'+2O',
-                'substat1':'ELEMENTALMASTERY+44',
-                'substat2':'CRITRATE+7.4%',
-                'substat3':'CRITDMG+7.O%',
-                'substat4':'ENERGYRECHARGE+16.2%'
-                }
-
+results = read_image_to_artifact('4.png')
 
 mainstatstrs = ['HP', 'ATK', 'HP%', 'ATK%',\
             'DEF%', 'Energy Recharge', 'Elemental Mastery', 'CRIT Rate%',\
@@ -31,12 +24,37 @@ substatstrs = ['HP', 'ATK', 'HP%', 'ATK%','DEF',\
             'DEF%', 'Energy Recharge', 'Elemental Mastery', 'CRIT Rate%',\
             'CRIT DMG%']
     
-
-#check mainstat
-values = []
-for i in mainstatstrs:
-    values.append(similar(results['mainstat']+results['mainstat_val'],i))
+main_label_dict={'HP':'mainhpraw', 'ATK':'mainatkraw', 'HP%':'mainhpperc', 'ATK%':'mainatkperc',\
+            'DEF%':'maindefperc', 'Energy Recharge':'mainer', 'Elemental Mastery':'mainem', 'CRIT Rate%':'maincritrate',\
+            'CRIT DMG%':'maincritdmg', 'Healing Bonus%':'mainhealing', 'Cryo DMG Bonus%':'maincryo',\
+            'Anemo DMG Bonus%':'mainanemo', 'Geo DMG Bonus%':'maingeo', 'Pyro DMG Bonus%':'mainpyro',\
+            'Hydro DMG Bonus%':'mainhydro', 'Electro DMG Bonus%':'mainelec', 'Physical DMG Bonus%':'mainphys'}
     
-max_val = max(values)
-index = values.index(max_val)
-print(mainstatstrs[index])
+sub_label_dict={'HP':'hpraw', 'ATK':'atkraw', 'HP%':'hpperc', 'ATK%':'atkperc','DEF':'defraw',\
+            'DEF%':'defperc', 'Energy Recharge':'er', 'Elemental Mastery':'em', 'CRIT Rate%':'critrate',\
+            'CRIT DMG%':'critdmg'}
+    
+#check and save labels
+main_stat = main_label_dict[check_stat(results['mainstat']+results['mainstat_val'],mainstatstrs)]
+substat1 = sub_label_dict[check_stat(results['substat1']+results['substat1_val'],substatstrs)]
+substat2 = sub_label_dict[check_stat(results['substat2']+results['substat2_val'],substatstrs)]
+substat3 = sub_label_dict[check_stat(results['substat3']+results['substat3_val'],substatstrs)]
+substat4 = sub_label_dict[check_stat(results['substat4']+results['substat4_val'],substatstrs)]
+
+#regex things
+#1) change all Os in values to 0s
+
+
+#arranging it into final dictionary and using fromDictionary to test
+
+artifact_dict = {}
+artifact_dict[main_stat]=results['mainstat_val']
+artifact_dict[substat1]=results['substat1_val']
+artifact_dict[substat2]=results['substat2_val']
+artifact_dict[substat3]=results['substat3_val']
+artifact_dict[substat4]=results['substat4_val']
+
+print(artifact_dict)
+
+# myartifact = Feather.fromDictionary(artifact_dict)
+# myartifact.print()
