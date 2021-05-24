@@ -70,6 +70,9 @@ class Artifact:
         self.substatlist = [self.atkraw, self.atkperc, self.hpraw, self.hpperc,
                        self.critrate, self.critdmg, self.em, self.er,
                        self.defraw, self.defperc]
+        self.substatstrs = ['ATK', 'ATK%', 'HP', 'HP%', 'CRIT Rate%',
+                            'CRIT DMG%', 'Elemental Mastery', 'Energy Recharge',
+                            'DEF', 'DEF%']
         if len(self.substatlist) - self.substatlist.count(None) > 4:
             raise ValueError("Cannot have more than 4 substats.")
 
