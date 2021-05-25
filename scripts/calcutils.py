@@ -105,7 +105,10 @@ def check_stat(stat,strlist):
     
     max_val = max(values)
     index = values.index(max_val)
-    return strlist[index]
+    
+    mean = np.mean(values)
+    
+    return (mean,strlist[index])
 
 def split_substats(substat,plusbutton):
     m_substat,x_substat,y_substat = check_lock_button(plusbutton,rgb2gray(substat))
