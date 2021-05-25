@@ -1,0 +1,1 @@
+cl tessapi_test.cpp tesseract41.lib leptonica-1.80.0.lib /EHsc /O2 /IF:\PycharmProjects\vcpkg\installed\x64-windows\include /link /LIBPATH:"F:\PycharmProjects\vcpkg\installed\x64-windows\lib"
