@@ -7,7 +7,7 @@ Created on Fri May 21 23:38:23 2021
 
 # from PySide2.QtWidgets import QApplication
 from PySide2.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel, QComboBox
-from PySide2.QtWidgets import QPushButton, QLineEdit
+from PySide2.QtWidgets import QPushButton, QLineEdit, QMessageBox
 from PySide2.QtCore import QMimeData, QObject, Signal, Slot  
 from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtCore import Qt
@@ -215,6 +215,13 @@ class ArtifactWidget(QFrame):
                     subdict['defperc'] = subval
                 
         return subdict
+    
+    def on_save_error(self, e):
+        msgbox = QMessageBox()
+        msgbox.setText(str(e))
+        msgbox.setStandardButtons(QMessageBox.Ok)
+        msgbox.exec()
+        
 
 #%%
 class FlowerWidget(ArtifactWidget):
@@ -234,10 +241,13 @@ class FlowerWidget(ArtifactWidget):
     def on_savebtn_pressed(self):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
-        # create the slot artifact
-        flower = Flower.fromDictionary(fulldict)
-        # debug print to check
-        flower.print()
+        try:
+            # create the slot artifact
+            flower = Flower.fromDictionary(fulldict)
+            # debug print to check
+            flower.print()
+        except Exception as e:
+            self.on_save_error(e)
 
 #%%    
 class FeatherWidget(ArtifactWidget):
@@ -257,10 +267,13 @@ class FeatherWidget(ArtifactWidget):
     def on_savebtn_pressed(self):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
-        # create the slot artifact
-        feather = Feather.fromDictionary(fulldict)
-        # debug print to check
-        feather.print()
+        try:
+            # create the slot artifact
+            feather = Feather.fromDictionary(fulldict)
+            # debug print to check
+            feather.print()
+        except Exception as e:
+            self.on_save_error(e)
         
 #%%    
 class TimepieceWidget(ArtifactWidget):
@@ -280,10 +293,13 @@ class TimepieceWidget(ArtifactWidget):
     def on_savebtn_pressed(self):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
-        # create the slot artifact
-        timepiece = Timepiece.fromDictionary(fulldict)
-        # debug print to check
-        timepiece.print()
+        try:
+            # create the slot artifact
+            timepiece = Timepiece.fromDictionary(fulldict)
+            # debug print to check
+            timepiece.print()
+        except Exception as e:
+            self.on_save_error(e)
 
 #%%    
 class GobletWidget(ArtifactWidget):
@@ -306,10 +322,13 @@ class GobletWidget(ArtifactWidget):
     def on_savebtn_pressed(self):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
-        # create the slot artifact
-        goblet = Goblet.fromDictionary(fulldict)
-        # debug print to check
-        goblet.print()
+        try:
+            # create the slot artifact
+            goblet = Goblet.fromDictionary(fulldict)
+            # debug print to check
+            goblet.print()
+        except Exception as e:
+            self.on_save_error(e)
 
 #%%    
 class HeadpieceWidget(ArtifactWidget):
@@ -329,7 +348,10 @@ class HeadpieceWidget(ArtifactWidget):
     def on_savebtn_pressed(self):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
-        # create the slot artifact
-        headpiece = Headpiece.fromDictionary(fulldict)
-        # debug print to check
-        headpiece.print()
+        try:
+            # create the slot artifact
+            headpiece = Headpiece.fromDictionary(fulldict)
+            # debug print to check
+            headpiece.print()
+        except Exception as e:
+            self.on_save_error(e)
