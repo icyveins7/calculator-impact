@@ -13,7 +13,11 @@ from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtCore import Qt
 
 from ci_substatEdit import SubstatEdit
+
+import sys
+sys.path.append("../scripts")
 from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
+# from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
 
 class ArtifactWidget(QFrame):
     artifactSelectedSignal = Signal()
@@ -231,7 +235,7 @@ class FlowerWidget(ArtifactWidget):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
         # create the slot artifact
-        flower = Flower(**fulldict)
+        flower = Flower.fromDictionary(fulldict)
         # debug print to check
         flower.print()
 
@@ -254,7 +258,7 @@ class FeatherWidget(ArtifactWidget):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
         # create the slot artifact
-        feather = Feather(**fulldict)
+        feather = Feather.fromDictionary(fulldict)
         # debug print to check
         feather.print()
         
@@ -277,7 +281,7 @@ class TimepieceWidget(ArtifactWidget):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
         # create the slot artifact
-        timepiece = Timepiece(**fulldict)
+        timepiece = Timepiece.fromDictionary(fulldict)
         # debug print to check
         timepiece.print()
 
@@ -303,7 +307,7 @@ class GobletWidget(ArtifactWidget):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
         # create the slot artifact
-        goblet = Goblet(**fulldict)
+        goblet = Goblet.fromDictionary(fulldict)
         # debug print to check
         goblet.print()
 
@@ -326,6 +330,6 @@ class HeadpieceWidget(ArtifactWidget):
         # call the parent method
         fulldict = super().on_savebtn_pressed()
         # create the slot artifact
-        headpiece = Headpiece(**fulldict)
+        headpiece = Headpiece.fromDictionary(fulldict)
         # debug print to check
         headpiece.print()
