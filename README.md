@@ -8,7 +8,6 @@ pip install pytesseract pillow scikit-image pyside2 numpy
 ```
 ##Folder organisation (for testing)
 
-    .
     ├── calcutils                   # basic functions
     ├── workflow                    # main function to extract the required stat labels and values for further processing
     ├── string_filtering            # employing regex and other text processing to produce a dictionary of stats and their corresponding values
