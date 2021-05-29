@@ -17,8 +17,8 @@ pip install pytesseract pillow scikit-image pyside2 numpy
     ├── lockbutton2                 # lockbutton2 for reference
     ├── lockbutton                  # lockbutton for reference
     ├── imgs                        # folder to store all images
-    │   ├── ss                      # where the uploaded full screenshots are saved
-    │   │   ├── saves               # where the screenshots are snipped before processing
+        ├── ss                      # where the uploaded full screenshots are saved
+            ├── saves               # where the screenshots are snipped before processing
 
 
 ## Credits
