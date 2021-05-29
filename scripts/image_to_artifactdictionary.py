@@ -13,7 +13,7 @@ from skimage.io import imread
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-image = imread(os.getcwd()+r'\imgs\ss\63.png')
+image = imread(os.getcwd()+r'\imgs\ss\48.png')
 
 myartifact = generate_dict(image)
 
