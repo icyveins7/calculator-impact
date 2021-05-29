@@ -6,7 +6,7 @@ A Pyside2 (Qt) application that calculates and compares your [Genshin Impact](ht
 ```bash
 pip install pytesseract pillow scikit-image pyside2 numpy
 ```
-##Folder organisation (for testing)
+## Folder organisation (for testing)
 
     CWD
     ├── calcutils.py                   # basic functions
