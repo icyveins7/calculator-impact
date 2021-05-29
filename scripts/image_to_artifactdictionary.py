@@ -13,9 +13,10 @@ from skimage.io import imread
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-image = imread(os.getcwd()+r'\imgs\ss\48.png')
+image = imread("F:/PycharmProjects/calculator-impact-imgs/6.png")
+image = np.copy(image, order='C')
 
 myartifact = generate_dict(image)
 
-artifact = Timepiece(**myartifact)
+artifact = Goblet(**myartifact)
 artifact.print()

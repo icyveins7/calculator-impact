@@ -24,7 +24,6 @@ def read_image_to_artifact(height,width,image):
     mainstat = crop_ref_lock(image,lockbutton_ref['y'],int(height/11.52),int(height/4.27),lockbutton_ref['x'],int(width/-1.6),int(width/-4.7))
     mainstat_value = crop_ref_lock(image,lockbutton_ref['y'],int(height/11.52),int(height/4.27),lockbutton_ref['x'],int(width/-6.4),width_lock+10)
 
-
     #check if main stat has 2 lines, the substats are displaced
     if '\n' in ocr_mainstat(mainstat).rstrip():
         level = crop_ref_lock(image,lockbutton_ref['y'],int(height/2.88),int(height/2.26),lockbutton_ref['x'],int(width/-1.64),int(width/-2.13))
