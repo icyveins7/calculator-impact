@@ -13,6 +13,9 @@ class Flower(Artifact):
     def __init__(self, **kwds):
         super().__init__(**kwds)
         
+        # Type
+        self.type = 1
+        
         # Check the main stat is HP
         if self.mainhpraw is None:
             raise ValueError("Flower main stat must be HP.")
@@ -26,6 +29,9 @@ class Feather(Artifact):
     def __init__(self, **kwds):
         super().__init__(**kwds)
         
+        # Type
+        self.type = 2
+        
         # Check the main stat is ATK
         if self.mainatkraw is None:
             raise ValueError("Feather main stat must be ATK.")
@@ -38,6 +44,9 @@ class Feather(Artifact):
 class Timepiece(Artifact):
     def __init__(self, **kwds):
         super().__init__(**kwds)
+        
+        # Type
+        self.type = 3
         
         # Check main stats allowed
         allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
@@ -55,6 +64,9 @@ class Goblet(Artifact):
     def __init__(self, **kwds):
         super().__init__(**kwds)
         
+        # Type
+        self.type = 4
+        
         # Check main stats allowed
         allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
                                  self.mainem, self.maincryo, self.mainanemo, self.maingeo,
@@ -70,6 +82,9 @@ class Goblet(Artifact):
 class Headpiece(Artifact):
     def __init__(self, **kwds):
         super().__init__(**kwds)
+        
+        # Type
+        self.type = 5
         
         # Check main stats allowed
         allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,

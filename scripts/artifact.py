@@ -16,6 +16,9 @@ class Artifact:
                  critrate=None, critdmg=None, em=None, er=None,
                  defraw=None, defperc=None):
         
+        # Type identifiers (0 - 5, 0 being plain artifact, 1-5 being slot number)
+        self.type = 0
+        
         # Main stats which may clash
         self.mainhpraw = mainhpraw
         self.mainatkraw = mainatkraw
@@ -135,5 +138,5 @@ class Artifact:
             print("DEF+%d" % self.defraw)
         if self.defperc is not None:
             print("DEF+%.1f%%" % self.defperc)
-            
-            
+
+        
