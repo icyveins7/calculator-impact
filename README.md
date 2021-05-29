@@ -8,16 +8,17 @@ pip install pytesseract pillow scikit-image pyside2 numpy
 ```
 ##Folder organisation (for testing)
 
-    ├── calcutils                   # basic functions
-    ├── workflow                    # main function to extract the required stat labels and values for further processing
-    ├── string_filtering            # employing regex and other text processing to produce a dictionary of stats and their corresponding values
-    ├── image_to_artifactdictionary # using the functions to link up dictionary to artifact classes
-    ├── plus_button                 # plus button for reference
-    ├── lockbutton2                 # lockbutton2 for reference
-    ├── lockbutton                  # lockbutton for reference
-    ├── imgs                        # folder to store all images
-        ├── ss                      # where the uploaded full screenshots are saved
-            ├── saves               # where the screenshots are snipped before processing
+    CWD
+    ├── calcutils.py                   # basic functions
+    ├── workflow.py                    # main function to extract the required stat labels and values for further processing
+    ├── string_filtering.py            # employing regex and other text processing to produce a dictionary of stats and their corresponding values
+    ├── image_to_artifactdictionary.py # using the functions to link up dictionary to artifact classes
+    ├── plus_button                    # plus button for reference
+    ├── lockbutton2                    # lockbutton2 for reference
+    ├── lockbutton                     # lockbutton for reference
+    ├── imgs                           # folder to store all images
+        ├── ss                         # where the uploaded full screenshots are saved
+            ├── saves                  # where the screenshots are snipped before processing
 
 
 ## Credits
