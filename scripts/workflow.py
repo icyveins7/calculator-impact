@@ -9,8 +9,7 @@ from skimage.color import rgb2gray
 from calcutils import check_mse, lock_button_init, crop_ref_lock, ocr_mainstat,ocr_substat,split_substats
 import os
 
-def read_image_to_artifact(image_filename):
-    image = io.imread(image_filename)
+def read_image_to_artifact(image):
     gray_image = rgb2gray(image)
     
     lockbutton1=rgb2gray(io.imread(os.getcwd()+'\lockbutton.png'))

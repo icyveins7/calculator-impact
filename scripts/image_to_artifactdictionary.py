@@ -9,8 +9,12 @@ from string_filtering import generate_dict
 import os
 from artifact_slots import *
 import warnings
+from skimage.io import imread
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-myartifact = generate_dict(os.getcwd()+r'\imgs\ss\saves\56.png')
+image = imread(os.getcwd()+r'\imgs\ss\saves\56.png')
+
+myartifact = generate_dict(image)
 artifact = Flower(**myartifact)
 artifact.print()

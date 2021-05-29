@@ -4,6 +4,8 @@ Created on Sat May 22 00:40:39 2021
 
 @author: sandra
 """
+
+from calcutils import crop
 from workflow import read_image_to_artifact
 import re
 from difflib import SequenceMatcher
@@ -45,8 +47,8 @@ sub_label_dict={'HP':'hpraw', 'ATK':'atkraw', 'HP%':'hpperc', 'ATK%':'atkperc','
             'DEF%':'defperc', 'Energy Recharge':'er', 'Elemental Mastery':'em', 'CRIT Rate%':'critrate',\
             'CRIT DMG%':'critdmg'}
 
-def generate_dict(path):
-    results = read_image_to_artifact(path)
+def generate_dict(image):
+    results = read_image_to_artifact(image)
 
     #check and save labels
     main_ratios,main_stat = check_stat(results['mainstat']+results['mainstat_val'],mainstatstrs)
