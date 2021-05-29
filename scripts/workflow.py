@@ -7,14 +7,15 @@ Created on Mon May 17 01:47:49 2021
 from skimage import io
 from skimage.color import rgb2gray
 from calcutils import check_mse, lock_button_init, crop_ref_lock, ocr_mainstat,ocr_substat,split_substats
+import os
 
 def read_image_to_artifact(image_filename):
     image = io.imread(image_filename)
     gray_image = rgb2gray(image)
     
-    lockbutton1=rgb2gray(io.imread('lockbutton.png'))
-    lockbutton2=rgb2gray(io.imread('lockbutton2.png'))
-    plusbutton = rgb2gray(io.imread('plus_button.png'))
+    lockbutton1=rgb2gray(io.imread(os.getcwd()+'\lockbutton.png'))
+    lockbutton2=rgb2gray(io.imread(os.getcwd()+'\lockbutton2.png'))
+    plusbutton = rgb2gray(io.imread(os.getcwd()+'\plus_button.png'))
 
     lockbutton1_prop,lockbutton2_prop = lock_button_init(lockbutton1,lockbutton2,gray_image)
 

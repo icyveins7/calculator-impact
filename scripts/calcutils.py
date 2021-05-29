@@ -10,7 +10,6 @@ import os
 import numpy as np
 from skimage.feature import match_template
 import pytesseract
-from difflib import SequenceMatcher
 from skimage.color import rgb2gray
 
 def crop(directory,filename,ratio_left,ratio_top,ratio_bottom):
@@ -94,21 +93,6 @@ def ocr_substat(img):
     custom_config = r'--oem 0 --psm 13 -l gs'
     result = pytesseract.image_to_string(img,config=custom_config)
     return result
-
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
-
-def check_stat(stat,strlist):
-    values = []
-    for i in strlist:
-        values.append(similar(stat,i.upper()))
-    
-    max_val = max(values)
-    index = values.index(max_val)
-    
-    mean = np.mean(values)
-    
-    return (mean,strlist[index])
 
 def split_substats(substat,plusbutton):
     m_substat,x_substat,y_substat = check_lock_button(plusbutton,rgb2gray(substat))
