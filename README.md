@@ -18,8 +18,6 @@ pip install pytesseract pillow scikit-image pyside2 numpy
     ├── lockbutton                     # lockbutton for reference
     ├── imgs                           # folder to store all images
         ├── ss                         # where the uploaded full screenshots are saved
-            ├── saves                  # where the screenshots are snipped before processing
-
 
 ## Credits
 Credits to Creamy Lam for her design of Xiangling's bear icon.
