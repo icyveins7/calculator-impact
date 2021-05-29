@@ -5,11 +5,13 @@ Created on Sat May 22 00:40:39 2021
 @author: sandra
 """
 
-from calcutils import crop
+from calcutils import cropping
 from workflow import read_image_to_artifact
 import re
 from difflib import SequenceMatcher
 import numpy as np
+
+import matplotlib.pyplot as plt
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -47,7 +49,9 @@ sub_label_dict={'HP':'hpraw', 'ATK':'atkraw', 'HP%':'hpperc', 'ATK%':'atkperc','
             'DEF%':'defperc', 'Energy Recharge':'er', 'Elemental Mastery':'em', 'CRIT Rate%':'critrate',\
             'CRIT DMG%':'critdmg'}
 
-def generate_dict(image):
+def generate_dict(ss_image):
+    image = cropping(ss_image)
+    plt.imshow(image)
     results = read_image_to_artifact(image)
 
     #check and save labels
@@ -70,7 +74,7 @@ def generate_dict(image):
     
     for i in ratios_include.keys():
         check_mean = ratios_include[i]
-        if check_mean > 0.15:
+        if check_mean > 0.149:
             substats_to_include.append(i)
     
     artifact_dict[main_stat]=results['mainstat_val']
@@ -87,28 +91,38 @@ def generate_dict(image):
     while i < len(values_):
         string = values_[i]
         
-        #1. if '..' is found, replace with only 1
+        #replace all : to .
+        if ':' in string:
+            string = string.replace(':','.')
+        
+        #if '..' is found, replace with only 1
         if '..' in string:
             string = string.replace('..','.')
         
-        #2. detect more than 1 dot which can screw up regex
+        #detect more than 1 dot which can screw up regex
         if string.count('.')>1:
             string = string.split('.')[0]+'.'+string.split('.')[1]
         
-        #3. replace all O to 0
+        #replace all O to 0
         if 'O' in  string:
             string = string.replace('O','0')
         
-        #4. remove all letters and other characters that shouldnt be there
+        #remove all letters and other characters that shouldnt be there
         string = string.upper()
         string = re.sub('[^\d.]', "", string)
         
-        #5. if stat is raw, need to remove all dots
+        #if stat is raw, need to remove all dots
         if 'raw' in  stats_[i]:
             string = string.replace('.','')
         
-        z = re.findall(r'\d+[.]*\d*',string)[0]
-        z = float(z)
+        z = re.findall(r'\d+[.]*\d*',string)
+        
+        #in case the filtering lets in letters and then after the regex there is nothing to find
+        
+        if len(z) == 0:
+            z = 0
+        else:
+            z = float(z[0])
         
         #print(string,z)
         

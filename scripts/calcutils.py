@@ -12,21 +12,20 @@ from skimage.feature import match_template
 import pytesseract
 from skimage.color import rgb2gray
 
-def crop(directory,filename,ratio_left,ratio_top,ratio_bottom):
-    im = Image.open(filename)
-    width, height = im.size
+def cropping(im):
+    height, width, channels = im.shape
     
-    left = ratio_left*width
-    right = width
-    top = ratio_top*height
-    bottom = height*ratio_bottom
+    ratio_left = 0.75
+    ratio_top = 0.15
+    ratio_bottom = 0.55
     
-    os.chdir(directory)
+    x1 = int(ratio_left*width)
+    x2 = width
+    y1 = int(ratio_top*height)
+    y2 = int(ratio_bottom*height)
     
-    im1 = im.crop((left,top,right,bottom))
-    im1.save(filename)
-    os.chdir('..')
-    return 0
+    im1 = im[y1:y2,x1:x2,:]
+    return im1
 
 def mse(imageA, imageB):
     err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)

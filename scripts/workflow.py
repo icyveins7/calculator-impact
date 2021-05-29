@@ -11,7 +11,7 @@ import os
 
 def read_image_to_artifact(image):
     gray_image = rgb2gray(image)
-    
+
     lockbutton1=rgb2gray(io.imread(os.getcwd()+'\lockbutton.png'))
     lockbutton2=rgb2gray(io.imread(os.getcwd()+'\lockbutton2.png'))
     plusbutton = rgb2gray(io.imread(os.getcwd()+'\plus_button.png'))

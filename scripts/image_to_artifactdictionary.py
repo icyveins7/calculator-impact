@@ -13,8 +13,9 @@ from skimage.io import imread
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-image = imread(os.getcwd()+r'\imgs\ss\saves\56.png')
+image = imread(os.getcwd()+r'\imgs\ss\63.png')
 
 myartifact = generate_dict(image)
-artifact = Flower(**myartifact)
+
+artifact = Timepiece(**myartifact)
 artifact.print()
