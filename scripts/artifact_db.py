@@ -52,13 +52,25 @@ class ArtifactDB:
         cur = con.cursor()
         
         sql = "delete from " + self.tablename
-        print(sql)
-        
+
         try:
             cur.execute(sql)
             con.commit()
         except sq.Error as e:
             print("Failed to delete table contents!")
+            raise(e)
+            
+    def deleteRows(self, ids, con):
+        cur = con.cursor()
+        
+        qmarks = ("?," * len(ids))[:-1]
+        sql = "delete from " + self.tablename + " where rowid in (%s)" % qmarks
+        
+        try:
+            cur.execute(sql, ids)
+            con.commit()
+        except sq.Error as e:
+            print("Failed to delete rows!")
             raise(e)
     
     def save(self, artifact, con):
@@ -125,12 +137,35 @@ if __name__ == "__main__":
     feather = Feather(mainatkraw=200, atkperc=14)
     artidb.save(feather, con)
     
+    tp = Timepiece(mainatkperc=12, defperc=14)
+    artidb.save(tp, con)
+    
+    gob = Goblet(mainelec=22, defperc=11)
+    artidb.save(gob, con)
+    
+    head = Headpiece(maincritrate=20, defperc=24)
+    artidb.save(head, con)
+    
     artifacts, ids = artidb.load(con)
     
+    # check printing
+    [i.print() for i in artifacts]
+    print(ids)
+    
+    # delete some rows
+    delids = [ids[0],ids[2],ids[4]]
+    artidb.deleteRows(delids, con)
+    
+    # check again
+    artifacts, ids = artidb.load(con)
+    # check printing
+    [i.print() for i in artifacts]
+    print(ids)
+    
+    # clear all
     artidb.clearTable(con)
     
     con.close()
     
-    [i.print() for i in artifacts]
-    print(ids)
+    
     
