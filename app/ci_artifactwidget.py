@@ -218,6 +218,8 @@ class ArtifactWidget(QFrame):
     
     def on_save_error(self, e):
         msgbox = QMessageBox()
+        msgbox.setWindowTitle("Invalid Input")
+        msgbox.setIcon(QMessageBox.Critical)
         msgbox.setText(str(e))
         msgbox.setStandardButtons(QMessageBox.Ok)
         msgbox.exec()
