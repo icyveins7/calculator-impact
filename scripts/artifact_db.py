@@ -15,7 +15,8 @@ class ArtifactDB:
     cursor would be invalidated if the database was closed externally.
     '''
     def __init__(self, con, tablename='artifacts'):
-        cur = con.cursor()
+        # Internal tablename
+        self.tablename = tablename
         
         self.dictkeys = ["mainhpraw", "mainatkraw", "mainhpperc", "mainatkperc",
                     "maindefperc", "mainer", "mainem", "maincritrate",
@@ -26,7 +27,14 @@ class ArtifactDB:
                     "critrate", "critdmg", "em", "er",
                     "defraw", "defperc"] # this is in order, mainstats -> substats
         
-        sql = "create table if not exists " + tablename + "(type int not null, "
+        # Initialise table
+        self.initTable(con)
+        
+        
+    def initTable(self, con):
+        cur = con.cursor()
+        
+        sql = "create table if not exists " + self.tablename + "(type int not null, "
         
         for key in self.dictkeys:
             sql = sql + key + " real, "
@@ -40,10 +48,23 @@ class ArtifactDB:
             print("Failed to initialize artifacts table!")
             raise(e)
             
-    def save(self, artifact, con, tablename='artifacts'):
+    def clearTable(self, con):
         cur = con.cursor()
         
-        sql = "insert into " + tablename + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        sql = "delete from " + self.tablename
+        print(sql)
+        
+        try:
+            cur.execute(sql)
+            con.commit()
+        except sq.Error as e:
+            print("Failed to delete table contents!")
+            raise(e)
+    
+    def save(self, artifact, con):
+        cur = con.cursor()
+        
+        sql = "insert into " + self.tablename + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
         
         l = [artifact.type]
         l.extend(artifact.mainstatlist)
@@ -56,11 +77,11 @@ class ArtifactDB:
             print("Failed to insert artifact into database!")
             raise(e)
             
-    def load(self, con, tablename='artifacts'):
+    def load(self, con):
         con.row_factory = sq.Row
         cur = con.cursor()
         
-        sql = "select * from " + tablename
+        sql = "select rowid, * from " + self.tablename
         
         try:
             cur.execute(sql)
@@ -74,9 +95,12 @@ class ArtifactDB:
             
     def rowsToArtifact(self, rows):
         artifacts = []
+        ids = []
         for row in rows:
             d = dict(row) # convert
             atype = d.pop('type', None) # remove the type
+            rowid = d.pop('rowid', None) # get the rowid
+            ids.append(rowid)
             
             if atype == 1:
                 artifacts.append(Flower.fromDictionary(d))
@@ -89,7 +113,7 @@ class ArtifactDB:
             elif atype == 5:
                 artifacts.append(Headpiece.fromDictionary(d))
                 
-        return artifacts
+        return artifacts, ids
             
 if __name__ == "__main__":
     con = sq.connect("test.db")
@@ -101,9 +125,12 @@ if __name__ == "__main__":
     feather = Feather(mainatkraw=200, atkperc=14)
     artidb.save(feather, con)
     
-    artifacts = artidb.load(con)
+    artifacts, ids = artidb.load(con)
+    
+    artidb.clearTable(con)
     
     con.close()
     
     [i.print() for i in artifacts]
+    print(ids)
     
