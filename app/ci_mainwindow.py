@@ -12,6 +12,9 @@ from PySide2.QtGui import QKeyEvent, QClipboard, QImage, QIcon
 from PySide2.QtCore import Qt
 
 from ci_artifactwidget import ArtifactWidget, FlowerWidget, FeatherWidget, TimepieceWidget, GobletWidget, HeadpieceWidget
+from ci_artifactlistwidget import ArtifactListWidget, ArtifactListFrame
+
+import sqlite3 as sq
 
 class CIMainWindow(QMainWindow):
     # deselectFrameSignal = Signal()
@@ -28,6 +31,15 @@ class CIMainWindow(QMainWindow):
         self.centralLayout = QHBoxLayout()
         self._centralWidget.setLayout(self.centralLayout)
         self.setCentralWidget(self._centralWidget)
+        
+        # Initialise database
+        self.con = sq.connect("savedata.db")
+        
+        # List of artifacts
+        self.artifactlistframe = ArtifactListFrame(self.con)
+        self.artifactlist = self.artifactlistframe.artifactlistwidget
+        # Add to layout
+        self.centralLayout.addWidget(self.artifactlistframe)
         
         # Frames for each slot
         self.flowerframe = FlowerWidget()
@@ -47,8 +59,9 @@ class CIMainWindow(QMainWindow):
         # Connections
         for frame in self.artifactframelist:
             frame.artifactSelectedSignal.connect(self.deselectFrames)
+            frame.artifactSavedSignal.connect(self.artifactlist.addArtifact)
 
-         
+    
     @Slot()
     def deselectFrames(self):
         for i in range(len(self.artifactframelist)):

@@ -16,10 +16,12 @@ from ci_substatEdit import SubstatEdit
 
 import sys
 sys.path.append("../scripts")
+from artifact import Artifact
 from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
 
 class ArtifactWidget(QFrame):
     artifactSelectedSignal = Signal()
+    artifactSavedSignal = Signal(Artifact)
     def __init__(self):
         super().__init__()
         
@@ -247,6 +249,9 @@ class FlowerWidget(ArtifactWidget):
             flower = Flower.fromDictionary(fulldict)
             # debug print to check
             flower.print()
+            # emit the signal
+            self.artifactSavedSignal.emit(flower)
+            
         except Exception as e:
             self.on_save_error(e)
 
@@ -273,6 +278,8 @@ class FeatherWidget(ArtifactWidget):
             feather = Feather.fromDictionary(fulldict)
             # debug print to check
             feather.print()
+            # emit the signal
+            self.artifactSavedSignal.emit(feather)
         except Exception as e:
             self.on_save_error(e)
         
@@ -299,6 +306,8 @@ class TimepieceWidget(ArtifactWidget):
             timepiece = Timepiece.fromDictionary(fulldict)
             # debug print to check
             timepiece.print()
+            # emit the signal
+            self.artifactSavedSignal.emit(timepiece)
         except Exception as e:
             self.on_save_error(e)
 
@@ -328,6 +337,8 @@ class GobletWidget(ArtifactWidget):
             goblet = Goblet.fromDictionary(fulldict)
             # debug print to check
             goblet.print()
+            # emit the signal
+            self.artifactSavedSignal.emit(goblet)
         except Exception as e:
             self.on_save_error(e)
 
@@ -354,5 +365,7 @@ class HeadpieceWidget(ArtifactWidget):
             headpiece = Headpiece.fromDictionary(fulldict)
             # debug print to check
             headpiece.print()
+            # emit the signal
+            self.artifactSavedSignal.emit(headpiece)
         except Exception as e:
             self.on_save_error(e)

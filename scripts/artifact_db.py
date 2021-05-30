@@ -98,9 +98,9 @@ class ArtifactDB:
         try:
             cur.execute(sql)
             rows = cur.fetchall()
-            artifacts = self.rowsToArtifact(rows)
+            artifacts, ids = self.rowsToArtifact(rows)
             
-            return artifacts
+            return artifacts, ids
         except sq.Error as e:
             print("Failed to load artifacts!")
             raise(e)
