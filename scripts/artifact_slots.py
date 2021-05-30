@@ -15,14 +15,15 @@ class Flower(Artifact):
         
         # Type
         self.type = 1
+        self.typestr = "Flower"
         
         # Check the main stat is HP
         if self.mainhpraw is None:
             raise ValueError("Flower main stat must be HP.")
         
-    def print(self):
-        print("Flower")
-        super().print()
+    # def print(self):
+    #     print("Flower")
+    #     super().print()
 
 #%%
 class Feather(Artifact):
@@ -31,14 +32,15 @@ class Feather(Artifact):
         
         # Type
         self.type = 2
+        self.typestr = "Feather"
         
         # Check the main stat is ATK
         if self.mainatkraw is None:
             raise ValueError("Feather main stat must be ATK.")
         
-    def print(self):
-        print("Feather")
-        super().print()
+    # def print(self):
+    #     print("Feather")
+    #     super().print()
         
 #%%
 class Timepiece(Artifact):
@@ -47,6 +49,7 @@ class Timepiece(Artifact):
         
         # Type
         self.type = 3
+        self.typestr = "Timepiece"
         
         # Check main stats allowed
         allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
@@ -55,9 +58,9 @@ class Timepiece(Artifact):
             raise ValueError("Main stat must be HP%/ATK%/DEF%/ER/EM.")
         
     
-    def print(self):
-        print("Timepiece")
-        super().print()
+    # def print(self):
+    #     print("Timepiece")
+    #     super().print()
         
 #%%
 class Goblet(Artifact):
@@ -66,6 +69,7 @@ class Goblet(Artifact):
         
         # Type
         self.type = 4
+        self.typestr = "Goblet"
         
         # Check main stats allowed
         allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
@@ -74,9 +78,9 @@ class Goblet(Artifact):
         if np.all(allowedMains==None):
             raise ValueError("Main stat must be HP%/ATK%/DEF%/EM/ELE DMG%/PHYS DMG%.")
         
-    def print(self):
-        print("Goblet")
-        super().print()
+    # def print(self):
+    #     print("Goblet")
+    #     super().print()
         
 #%%
 class Headpiece(Artifact):
@@ -85,6 +89,7 @@ class Headpiece(Artifact):
         
         # Type
         self.type = 5
+        self.typestr = "Headpiece"
         
         # Check main stats allowed
         allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
@@ -93,9 +98,9 @@ class Headpiece(Artifact):
             raise ValueError("Main stat must be HP%/ATK%/DEF%/CRIT Rate/CRIT DMG/Healing Bonus.")
         
         
-    def print(self):
-        print("Headpiece")
-        super().print()
+    # def print(self):
+    #     print("Headpiece")
+    #     super().print()
         
 #%% Unit test
 if __name__ == "__main__":

@@ -109,34 +109,53 @@ class Artifact:
         
 
     def print(self):
+        s = ""
+        
+        s = s + self.typestr + "\n"
+        
         idx = [i for i, val in enumerate(self.mainstatlist) if val != None][0]
         # pretty printing based on if its % => move to end of string
         if self.mainstatstrs[idx][-1] == '%':
             self.mainstatstr = '(Main) %s +%.1f%%' % (self.mainstatstrs[idx][:-1], self.mainstatlist[idx])
         else:
             self.mainstatstr = '(Main) %s +%.1f' % (self.mainstatstrs[idx], self.mainstatlist[idx])
-        print(self.mainstatstr)
+        # print(self.mainstatstr)
+        s = s + self.mainstatstr + "\n"
         
         # substat printing
         if self.atkraw is not None:
-            print("ATK+%d" % self.atkraw)
+            s = s + ("ATK+%d" % self.atkraw) + "\n"
+            # print("ATK+%d" % self.atkraw)
         if self.atkperc is not None:
-            print("ATK+%.1f%%" % self.atkperc)
+            s = s + ("ATK+%.1f%%" % self.atkperc) + "\n"
+            # print("ATK+%.1f%%" % self.atkperc)
         if self.hpraw is not None:
-            print("HP+%d" % self.hpraw)
+            s = s + ("HP+%d" % self.hpraw) + "\n"
+            # print("HP+%d" % self.hpraw)
         if self.hpperc is not None:
-            print("HP+%.1f%%" % self.hpperc)
+            s = s + ("HP+%.1f%%" % self.hpperc) + "\n"
+            # print("HP+%.1f%%" % self.hpperc)
         if self.critrate is not None:
-            print("CRIT Rate+%.1f%%" % self.critrate)
+            s = s + ("CRIT Rate+%.1f%%" % self.critrate) + "\n"
+            # print("CRIT Rate+%.1f%%" % self.critrate)
         if self.critdmg is not None:
-            print("CRIT DMG+%.1f%%" % self.critdmg)
+            s = s + ("CRIT DMG+%.1f%%" % self.critdmg) + "\n"
+            # print("CRIT DMG+%.1f%%" % self.critdmg)
         if self.em is not None:
-            print("Elemental Mastery+%d" % self.em)
+            s = s + ("Elemental Mastery+%d" % self.em) + "\n"
+            # print("Elemental Mastery+%d" % self.em)
         if self.er is not None:
-            print("Energy Recharge+%.1f%%" % self.er)
+            s = s + ("Energy Recharge+%.1f%%" % self.er) + "\n"
+            # print("Energy Recharge+%.1f%%" % self.er)
         if self.defraw is not None:
-            print("DEF+%d" % self.defraw)
+            s = s + ("DEF+%d" % self.defraw) + "\n"
+            # print("DEF+%d" % self.defraw)
         if self.defperc is not None:
-            print("DEF+%.1f%%" % self.defperc)
+            s = s + ("DEF+%.1f%%" % self.defperc) + "\n"
+            # print("DEF+%.1f%%" % self.defperc)
+            
+        print(s)
+        
+        return s
 
         

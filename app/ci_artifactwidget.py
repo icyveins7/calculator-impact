@@ -17,7 +17,6 @@ from ci_substatEdit import SubstatEdit
 import sys
 sys.path.append("../scripts")
 from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
-# from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
 
 class ArtifactWidget(QFrame):
     artifactSelectedSignal = Signal()
