@@ -13,6 +13,7 @@ from PySide2.QtCore import Qt
 
 from ci_artifactwidget import ArtifactWidget, FlowerWidget, FeatherWidget, TimepieceWidget, GobletWidget, HeadpieceWidget
 from ci_artifactlistwidget import ArtifactListWidget, ArtifactListFrame
+from ci_navigationwidget import NavigationWidget
 
 import sqlite3 as sq
 
@@ -34,6 +35,10 @@ class CIMainWindow(QMainWindow):
         
         # Initialise database
         self.con = sq.connect("savedata.db")
+        
+        # Settings Bar
+        self.navbar = NavigationWidget()
+        self.centralLayout.addWidget(self.navbar)
         
         # List of artifacts
         self.artifactlistframe = ArtifactListFrame(self.con)

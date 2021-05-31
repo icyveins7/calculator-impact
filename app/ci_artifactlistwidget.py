@@ -25,6 +25,8 @@ class ArtifactListFrame(QFrame):
         
         # Create filter dropdown
         self.filterDropdown = QComboBox()
+        self.filterDropdown.addItems(['All','Flowers','Feathers',
+                                      'Timepieces','Goblets','Headpieces'])
         
         # Create clear button
         self.clearbtn = QPushButton("Clear")
@@ -38,6 +40,10 @@ class ArtifactListFrame(QFrame):
         self.toplayout.addWidget(self.clearbtn)
         self._widgetlayout.addLayout(self.toplayout)
         self._widgetlayout.addWidget(self.artifactlistwidget)
+        
+        # Connections
+        self.clearbtn.clicked.connect(self.artifactlistwidget.clearArtifacts)
+        self.filterDropdown.textActivated.connect(self.artifactlistwidget.filterArtifacts)
 
 class ArtifactListWidget(QListWidget):
     def __init__(self, con):
@@ -56,8 +62,36 @@ class ArtifactListWidget(QListWidget):
     def load(self):
         self.artifacts, self.ids = self.db.load(self.con)
         
-        
+    
+    @Slot()
+    def clearArtifacts(self):
+        self.clear()
+        self.db.clearTable(self.con)
+    
     @Slot(Artifact)
     def addArtifact(self, artifact):
         self.db.save(artifact, self.con)
         self.addItem(artifact.print())
+        
+    @Slot(str)
+    def filterArtifacts(self, filterstr):
+        print('landed in slot')
+        filtered = None
+        if filterstr == 'All':
+            filtered = self.artifacts
+        elif filterstr == 'Flowers':
+            filtered = [i for i in self.artifacts if i.type==1]
+        elif filterstr == 'Feathers':
+            filtered = [i for i in self.artifacts if i.type==2]
+        elif filterstr == 'Timepieces':
+            filtered = [i for i in self.artifacts if i.type==3]
+        elif filterstr == 'Goblets':
+            filtered = [i for i in self.artifacts if i.type==4]
+        elif filterstr == 'Headpieces':
+            filtered = [i for i in self.artifacts if i.type==5]
+            
+        self.clear()
+        for artifact in filtered:
+            self.addItem(artifact.print())
+            
+            

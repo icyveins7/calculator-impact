@@ -247,8 +247,6 @@ class FlowerWidget(ArtifactWidget):
         try:
             # create the slot artifact
             flower = Flower.fromDictionary(fulldict)
-            # debug print to check
-            flower.print()
             # emit the signal
             self.artifactSavedSignal.emit(flower)
             
@@ -276,8 +274,6 @@ class FeatherWidget(ArtifactWidget):
         try:
             # create the slot artifact
             feather = Feather.fromDictionary(fulldict)
-            # debug print to check
-            feather.print()
             # emit the signal
             self.artifactSavedSignal.emit(feather)
         except Exception as e:
@@ -304,8 +300,6 @@ class TimepieceWidget(ArtifactWidget):
         try:
             # create the slot artifact
             timepiece = Timepiece.fromDictionary(fulldict)
-            # debug print to check
-            timepiece.print()
             # emit the signal
             self.artifactSavedSignal.emit(timepiece)
         except Exception as e:
@@ -335,8 +329,6 @@ class GobletWidget(ArtifactWidget):
         try:
             # create the slot artifact
             goblet = Goblet.fromDictionary(fulldict)
-            # debug print to check
-            goblet.print()
             # emit the signal
             self.artifactSavedSignal.emit(goblet)
         except Exception as e:
@@ -363,8 +355,6 @@ class HeadpieceWidget(ArtifactWidget):
         try:
             # create the slot artifact
             headpiece = Headpiece.fromDictionary(fulldict)
-            # debug print to check
-            headpiece.print()
             # emit the signal
             self.artifactSavedSignal.emit(headpiece)
         except Exception as e:
