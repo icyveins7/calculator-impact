@@ -10,13 +10,23 @@ import os
 from artifact_slots import *
 import warnings
 from skimage.io import imread
+import matplotlib.pyplot as plt
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-image = imread("F:/PycharmProjects/calculator-impact-imgs/6.png")
-image = np.copy(image, order='C')
+ss_image = imread(os.getcwd()+r'\imgs\ss\41.png')
 
-myartifact = generate_dict(image)
+#1, 6 Flower
+#2, 7 Feather
+#3, 8 Timepiece
+#4, 9 Goblet
+#5, 0 Headpiece
 
-artifact = Goblet(**myartifact)
+results,myartifact,ax,image = generate_dict(ss_image)
+
+print(results)
+print('\n')
+artifact = Flower(**myartifact)
 artifact.print()
+
+ax.imshow(image)
