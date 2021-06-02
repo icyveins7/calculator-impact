@@ -14,6 +14,7 @@ from PySide2.QtCore import Qt
 from ci_artifactwidget import ArtifactWidget, FlowerWidget, FeatherWidget, TimepieceWidget, GobletWidget, HeadpieceWidget
 from ci_artifactlistwidget import ArtifactListWidget, ArtifactListFrame
 from ci_navigationwidget import NavigationWidget
+from ci_settingsframe import SettingsFrame
 
 import sqlite3 as sq
 
@@ -36,17 +37,17 @@ class CIMainWindow(QMainWindow):
         # Initialise database
         self.con = sq.connect("savedata.db")
         
-        # Settings Bar
+        ### Settings Bar
         self.navbar = NavigationWidget()
         self.centralLayout.addWidget(self.navbar)
         
-        # List of artifacts
+        ### List of artifacts
         self.artifactlistframe = ArtifactListFrame(self.con)
         self.artifactlist = self.artifactlistframe.artifactlistwidget
         # Add to layout
         self.centralLayout.addWidget(self.artifactlistframe)
         
-        # Frames for each slot
+        ### Frames for each slot
         self.flowerframe = FlowerWidget()
         self.featherframe = FeatherWidget()
         self.timepieceframe = TimepieceWidget()
@@ -55,17 +56,51 @@ class CIMainWindow(QMainWindow):
         self.artifactframelist = [self.flowerframe,self.featherframe,
                                   self.timepieceframe,self.gobletframe,
                                   self.headpieceframe]
-        self.currentFrame = None
+        self.currentFrame = None # for selecting which artifact to paste in
         
         # Add to the layout
         for frame in self.artifactframelist:
             self.centralLayout.addWidget(frame)
         
+        ### Settings Frame (hidden on start)
+        self.settingsFrame = SettingsFrame()
+        self.centralLayout.addWidget(self.settingsFrame)
+        self.settingsFrame.hide()
+
+
+        ### Add stretch to layout after all frames
+        self.centralLayout.addStretch(0)
+        
         # Connections
         for frame in self.artifactframelist:
             frame.artifactSelectedSignal.connect(self.deselectFrames)
             frame.artifactSavedSignal.connect(self.artifactlist.addArtifact)
+        self.navbar.addTabBtn.clicked.connect(self.showAddTab)
+        self.navbar.cmpTabBtn.clicked.connect(self.showCmpTab)
+        self.navbar.settingsBtn.clicked.connect(self.showSettings)
 
+
+    @Slot()
+    def showAddTab(self):
+        self.artifactlistframe.show()
+        for frame in self.artifactframelist:
+            frame.show()
+        # hide everything else
+        self.settingsFrame.hide()
+        
+    @Slot()
+    def showCmpTab(self):
+        print("Not implemented yet.")
+        
+    @Slot()
+    def showSettings(self):
+        self.settingsFrame.show()
+        # hide everything else
+        self.artifactlistframe.hide()
+        for frame in self.artifactframelist:
+            frame.hide()
+        
+        
     
     @Slot()
     def deselectFrames(self):
