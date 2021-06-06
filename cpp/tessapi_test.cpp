@@ -2,6 +2,7 @@
 #include <leptonica/allheaders.h>
 #include <chrono>
 #include <iostream>
+#include "ci_tessapi_wrapper.h"
 
 int main()
 {
@@ -45,6 +46,13 @@ int main()
     printf("OCR output again: \n%s", outText2);
     
     delete outText2;
+
+    // Test the class
+    CITessApiWrapper citaw;
+    char output[1024];
+    citaw.eng_image_to_string(imgdata, 322, 42, output);
+    printf("OCR output with class: \n%s", output);
+
 
     // Destroy used object and release memory
     api->End();

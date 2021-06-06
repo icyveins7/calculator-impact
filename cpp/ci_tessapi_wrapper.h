@@ -31,16 +31,15 @@ class CITessApiWrapper
             delete gsapi;
         }
         
-        void eng_image_to_string(uint32_t *img, uint32_t width_pixels, uint32_t height_pixels,
-                                 uint32_t depth, char *output, int psm=3) // 3 is the default
+        void eng_image_to_string(unsigned char *img, uint32_t width_pixels, uint32_t height_pixels,
+                                 char *output, int psm=3, int resolution=96)
         {
-            // memory for image
-            Pix *image;
             // memory for text
             char *outText;
             
-            image = pixCreate(width_pixels, height_pixels, depth);
-            memcpy(image->data, img, width_pixels*height_pixels*sizeof(uint32_t));
+            // Set Image and Resolution
+            engapi->SetImage(img, width_pixels, height_pixels, 3, 3*width_pixels);
+            engapi->SetSourceResolution(resolution);
             // OCR Result
             engapi->SetPageSegMode(psm);
             outText = engapi->GetUTF8Text();
@@ -49,19 +48,17 @@ class CITessApiWrapper
             
             // free everything
             delete [] outText;
-            pixDestroy(&image);
         }
         
-        void gs_image_to_string(uint32_t *img, uint32_t width_pixels, uint32_t height_pixels,
-                                uint32_t depth, char *output, int psm=3) // 3 is the default
+        void gs_image_to_string(unsigned char *img, uint32_t width_pixels, uint32_t height_pixels,
+                                char *output, int psm=3, int resolution=96)
         {
-            // memory for image
-            Pix *image;
             // memory for text
             char *outText;
             
-            image = pixCreate(width_pixels, height_pixels, depth);
-            memcpy(image->data, img, width_pixels*height_pixels*sizeof(uint32_t)); // copy into the allocated memory
+            // Set Image and Resolution
+            gsapi->SetImage(img, width_pixels, height_pixels, 3, 3*width_pixels);
+            gsapi->SetSourceResolution(resolution);
             // OCR Result
             gsapi->SetPageSegMode(psm);
             outText = gsapi->GetUTF8Text();
@@ -70,6 +67,5 @@ class CITessApiWrapper
             
             // free everything
             delete [] outText;
-            pixDestroy(&image);
         }
-}
+};
