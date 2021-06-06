@@ -27,6 +27,24 @@ int main()
     auto t4 = std::chrono::high_resolution_clock::now();
     std::cout<<"Time for pixRead to result: " << std::chrono::duration<double>(t4-t3).count() << "s." << std::endl;
     printf("OCR output:\n%s", outText);
+    
+    // Open directly
+    // FILE *fp = fopen("testimg.png", "rb");
+//     unsigned char *imgdata = (unsigned char*)malloc(sizeof(unsigned char) * 18349);
+//    fread(imgdata, sizeof(unsigned char), 18349, fp);
+    FILE *fp = fopen("testimg.bin", "rb");
+    unsigned char *imgdata = new unsigned char[40572];
+    fread(imgdata, sizeof(unsigned char), 40572, fp);
+
+    fclose(fp);
+    api->SetImage(imgdata, 322, 42, 3, 3*322);
+    api->SetSourceResolution(96);
+    
+    char *outText2 = api->GetUTF8Text(); // yay this works but there is a weird warning, need to set resolution (is 96,96 according to Pillow)
+    
+    printf("OCR output again: \n%s", outText2);
+    
+    delete outText2;
 
     // Destroy used object and release memory
     api->End();
