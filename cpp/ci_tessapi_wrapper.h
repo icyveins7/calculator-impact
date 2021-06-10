@@ -41,7 +41,7 @@ class CITessApiWrapper
             engapi->SetImage(img, width_pixels, height_pixels, 3, 3*width_pixels);
             engapi->SetSourceResolution(resolution);
             // OCR Result
-            engapi->SetPageSegMode(psm);
+            engapi->SetPageSegMode(static_cast<tesseract::PageSegMode>(psm));
             outText = engapi->GetUTF8Text();
             // copy into output
             strncpy(output, outText, strlen(outText) + 1);
@@ -60,7 +60,7 @@ class CITessApiWrapper
             gsapi->SetImage(img, width_pixels, height_pixels, 3, 3*width_pixels);
             gsapi->SetSourceResolution(resolution);
             // OCR Result
-            gsapi->SetPageSegMode(psm);
+            gsapi->SetPageSegMode(static_cast<tesseract::PageSegMode>(psm));
             outText = gsapi->GetUTF8Text();
             // copy into output
             strncpy(output, outText, strlen(outText) + 1);
