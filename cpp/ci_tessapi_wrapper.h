@@ -1,6 +1,7 @@
 #include <tesseract/baseapi.h>
 #include <leptonica/allheaders.h>
 #include <stdint.h>
+#include <string>
 
 class CITessApiWrapper
 {
@@ -9,18 +10,21 @@ class CITessApiWrapper
         tesseract::TessBaseAPI *gsapi;
     
     public:
+    
         CITessApiWrapper(){
+            printf("Allocating new engapi..\n");
             engapi = new tesseract::TessBaseAPI();
             // Initialize tesseract-ocr with English, without specifying tessdata path
             if (engapi->Init(NULL, "eng", tesseract::OEM_TESSERACT_ONLY)) { // this is --oem 0 -l eng
-                fprintf(stderr, "Could not initialize tesseract ENG.\n");
+                printf("Could not initialize tesseract ENG.\n");
                 throw(1);
             }
             
+            printf("Allocating new gsapi..\n");
             gsapi = new tesseract::TessBaseAPI();
-            // Initialize tesseract-ocr with English, without specifying tessdata path
+            // Initialize tesseract-ocr with GS, without specifying tessdata path
             if (gsapi->Init(NULL, "gs", tesseract::OEM_TESSERACT_ONLY)) { // this is --oem 0 -l gs
-                fprintf(stderr, "Could not initialize tesseract GS.\n");
+                printf("Could not initialize tesseract GS.\n");
                 throw(2);
             }
         }
@@ -31,8 +35,8 @@ class CITessApiWrapper
             delete gsapi;
         }
         
-        void eng_image_to_string(unsigned char *img, uint32_t width_pixels, uint32_t height_pixels,
-                                 char *output, int psm=3, int resolution=96)
+        std::string eng_image_to_string(unsigned char *img, uint32_t width_pixels, uint32_t height_pixels,
+                                 int psm=3, int resolution=96)
         {
             // memory for text
             char *outText;
@@ -43,15 +47,17 @@ class CITessApiWrapper
             // OCR Result
             engapi->SetPageSegMode(static_cast<tesseract::PageSegMode>(psm));
             outText = engapi->GetUTF8Text();
-            // copy into output
-            strncpy(output, outText, strlen(outText) + 1);
+            // create output std string
+            std::string output(outText);
             
             // free everything
             delete [] outText;
+            
+            return output;
         }
         
-        void gs_image_to_string(unsigned char *img, uint32_t width_pixels, uint32_t height_pixels,
-                                char *output, int psm=3, int resolution=96)
+        std::string gs_image_to_string(unsigned char *img, uint32_t width_pixels, uint32_t height_pixels,
+                                int psm=3, int resolution=96)
         {
             // memory for text
             char *outText;
@@ -62,10 +68,12 @@ class CITessApiWrapper
             // OCR Result
             gsapi->SetPageSegMode(static_cast<tesseract::PageSegMode>(psm));
             outText = gsapi->GetUTF8Text();
-            // copy into output
-            strncpy(output, outText, strlen(outText) + 1);
+            // create output std string
+            std::string output(outText);
             
             // free everything
             delete [] outText;
+            
+            return output;
         }
 };

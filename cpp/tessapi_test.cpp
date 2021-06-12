@@ -49,9 +49,9 @@ int main()
 
     // Test the class
     CITessApiWrapper citaw;
-    char output[1024];
-    citaw.eng_image_to_string(imgdata, 322, 42, output);
-    printf("OCR output with class: \n%s", output);
+    // char output[1024];
+    std::string output = citaw.eng_image_to_string(imgdata, 322, 42);
+    printf("OCR output with class: \n%s", output.c_str());
 
 
     // Destroy used object and release memory
