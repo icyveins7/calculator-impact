@@ -10,7 +10,7 @@ from calcutils import check_mse, lock_button_init, crop_ref_lock, ocr_mainstat,o
 import os
 import matplotlib.pyplot as plt
 
-def read_image_to_artifact(height,width,image):
+def read_image_to_artifact(height,width,image,citaw=None):
     gray_image = rgb2gray(image)
 
     lockbutton1=rgb2gray(io.imread(os.getcwd()+'\lockbutton.png'))
@@ -65,7 +65,7 @@ def read_image_to_artifact(height,width,image):
 
 
     #check if main stat has 2 lines, the substats are displaced
-    if '\n' in ocr_mainstat(mainstat).rstrip():
+    if '\n' in ocr_mainstat(mainstat, citaw).rstrip():
         level = crop_ref_lock(image,lockbutton_ref['y'],int(height/2.88),int(height/2.26),lockbutton_ref['x'],int(width/-1.64),int(width/-2.13))
         substat1 = crop_ref_lock(image,lockbutton_ref['y'],int(height/2.215),int(height/1.888),lockbutton_ref['x'],int(width/-1.76),width_lock+10)
         substat2 = crop_ref_lock(image,lockbutton_ref['y'],int(height/1.888),int(height/1.646),lockbutton_ref['x'],int(width/-1.76),width_lock+10)
@@ -111,17 +111,17 @@ def read_image_to_artifact(height,width,image):
     substat3_label,substat3_value = split_substats(substat3,plusbutton)
     substat4_label,substat4_value = split_substats(substat4,plusbutton)
     
-    results = {'mainstat':ocr_mainstat(mainstat).rstrip().upper(),
-                    'mainstat_val':ocr_mainstat(mainstat_value).strip().upper(),
-                    'level':ocr_substat(level).strip().upper(),
-                    'substat1':ocr_substat(substat1_label).strip().upper(),
-                    'substat1_val':ocr_substat(substat1_value).strip().upper(),
-                    'substat2':ocr_substat(substat2_label).strip().upper(),
-                    'substat2_val':ocr_substat(substat2_value).strip().upper(),
-                    'substat3':ocr_substat(substat3_label).strip().upper(),
-                    'substat3_val':ocr_substat(substat3_value).strip().upper(),
-                    'substat4':ocr_substat(substat4_label).strip().upper(),
-                    'substat4_val':ocr_substat(substat4_value).strip().upper(),
+    results = {'mainstat':ocr_mainstat(mainstat,citaw).rstrip().upper(),
+                    'mainstat_val':ocr_mainstat(mainstat_value, citaw).strip().upper(),
+                    'level':ocr_substat(level, citaw).strip().upper(),
+                    'substat1':ocr_substat(substat1_label, citaw).strip().upper(),
+                    'substat1_val':ocr_substat(substat1_value, citaw).strip().upper(),
+                    'substat2':ocr_substat(substat2_label, citaw).strip().upper(),
+                    'substat2_val':ocr_substat(substat2_value, citaw).strip().upper(),
+                    'substat3':ocr_substat(substat3_label, citaw).strip().upper(),
+                    'substat3_val':ocr_substat(substat3_value, citaw).strip().upper(),
+                    'substat4':ocr_substat(substat4_label, citaw).strip().upper(),
+                    'substat4_val':ocr_substat(substat4_value, citaw).strip().upper(),
                     }
 
     return(results,ax)

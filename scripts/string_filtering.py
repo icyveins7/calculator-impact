@@ -49,10 +49,10 @@ sub_label_dict={'HP':'hpraw', 'ATK':'atkraw', 'HP%':'hpperc', 'ATK%':'atkperc','
             'DEF%':'defperc', 'Energy Recharge':'er', 'Elemental Mastery':'em', 'CRIT Rate%':'critrate',\
             'CRIT DMG%':'critdmg'}
 
-def generate_dict(ss_image):
+def generate_dict(ss_image, citaw=None):
     image = cropping(ss_image)
     #plt.imshow(image)
-    results,ax = read_image_to_artifact(image.shape[0],image.shape[1],image)
+    results,ax = read_image_to_artifact(image.shape[0],image.shape[1],image,citaw)
 
     #check and save labels
     main_ratios,main_stat = check_stat(results['mainstat']+results['mainstat_val'],mainstatstrs)
