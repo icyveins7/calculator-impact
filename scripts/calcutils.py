@@ -88,16 +88,19 @@ def ocr_mainstat(img, citaw=None):
         custom_config = r'--oem 0 -l eng'
         result = pytesseract.image_to_string(img,config=custom_config)
     else: # use the new api reference
-        result = citaw.image_to_string("eng", img.tobytes(), img.shape[1], img.shape[0])
-    return result
+        width, height = img.size    
+        img = np.fromstring(img.tobytes(), dtype=np.uint8)
+        
+        result = citaw.image_to_string("eng", img.tobytes(), width, height)
+    return result.decode('utf-8')
 
 def ocr_substat(img, citaw=None):
     if citaw is None:
         custom_config = r'--oem 0 --psm 13 -l gs'
         result = pytesseract.image_to_string(img,config=custom_config)
     else:
-        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0])
-    return result
+        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0], psm=13)
+    return result.decode('utf-8')
 
 def split_substats(substat,plusbutton):
     m_substat,x_substat,y_substat = check_lock_button(plusbutton,rgb2gray(substat))

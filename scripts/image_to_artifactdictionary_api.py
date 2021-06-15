@@ -7,19 +7,26 @@ Created on Mon Jun 14 00:07:34 2021
 """
 
 from string_filtering import generate_dict
+import sys
 import os
 from artifact_slots import *
 import warnings
 from skimage.io import imread
 import matplotlib.pyplot as plt
-os.path.extend(os.path.join(os.getcwd(), "..","cpp"))
+sys.path.append(os.path.join(os.getcwd(), "..","cpp"))
+cwd = os.path.dirname(os.path.abspath(__file__))
+tessdata_dir = os.path.join(cwd,"..","tesseract_custom")
+os.environ["TESSDATA_PREFIX"] = tessdata_dir
+print("Set TESSDATA_PREFIX to %s" % (os.environ["TESSDATA_PREFIX"]))
+
 import tessapi_wrapper
 
 citaw = tessapi_wrapper.PyCITessApiWrapper()
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-ss_image = imread(os.getcwd()+r'\imgs\ss\41.png')
+ss_image = imread("F:/PycharmProjects/calculator-impact-imgs/6.png")
+ss_image = ss_image[:,:,:3]
 
 #1, 6 Flower
 #2, 7 Feather
@@ -31,7 +38,9 @@ results,myartifact,ax,image = generate_dict(ss_image, citaw)
 
 print(results)
 print('\n')
-artifact = Flower(**myartifact)
-artifact.print()
 
-ax.imshow(image)
+
+# artifact = Flower(**myartifact)
+# artifact.print()
+
+# ax.imshow(image)

@@ -18,6 +18,21 @@ from ci_settingsframe import SettingsFrame
 
 import sqlite3 as sq
 
+from string_filtering import generate_dict
+import sys
+import os
+from artifact_slots import *
+import warnings
+from skimage.io import imread
+import matplotlib.pyplot as plt
+sys.path.append(os.path.join(os.getcwd(), "..","cpp"))
+sys.path.append(os.path.join(os.getcwd(), "..","scripts"))
+cwd = os.path.dirname(os.path.abspath(__file__))
+tessdata_dir = os.path.join(cwd,"..","tesseract_custom")
+os.environ["TESSDATA_PREFIX"] = tessdata_dir
+print("Set TESSDATA_PREFIX to %s" % (os.environ["TESSDATA_PREFIX"]))
+import tessapi_wrapper
+
 class CIMainWindow(QMainWindow):
     # deselectFrameSignal = Signal()
     def __init__(self):
@@ -33,6 +48,9 @@ class CIMainWindow(QMainWindow):
         self.centralLayout = QHBoxLayout()
         self._centralWidget.setLayout(self.centralLayout)
         self.setCentralWidget(self._centralWidget)
+        
+        # Initialise Backend
+        self.citaw = tessapi_wrapper.PyCITessApiWrapper()
         
         # Initialise database
         self.con = sq.connect("savedata.db")
@@ -75,6 +93,7 @@ class CIMainWindow(QMainWindow):
         for frame in self.artifactframelist:
             frame.artifactSelectedSignal.connect(self.deselectFrames)
             frame.artifactSavedSignal.connect(self.artifactlist.addArtifact)
+            frame.processImgSignal.connect(self.processImage)
         self.navbar.addTabBtn.clicked.connect(self.showAddTab)
         self.navbar.cmpTabBtn.clicked.connect(self.showCmpTab)
         self.navbar.settingsBtn.clicked.connect(self.showSettings)
@@ -99,9 +118,7 @@ class CIMainWindow(QMainWindow):
         self.artifactlistframe.hide()
         for frame in self.artifactframelist:
             frame.hide()
-        
-        
-    
+
     @Slot()
     def deselectFrames(self):
         for i in range(len(self.artifactframelist)):
@@ -109,6 +126,13 @@ class CIMainWindow(QMainWindow):
                 self.artifactframelist[i].deselect()
             else:
                 self.currentFrame = self.sender()
+                
+    @Slot(np.ndarray)
+    def processImage(self, img):
+        print("Landed in processImage slot")
+        results,myartifact,ax,image = generate_dict(img, self.citaw)
+        print(myartifact)
+        self.sender().loadArtifactStats(Artifact.fromDictionary(myartifact)) # you don't actually need the type here, the saving will do it for you
     
     def keyPressEvent(self, e: QKeyEvent):
         super().keyPressEvent(e) # call the original one

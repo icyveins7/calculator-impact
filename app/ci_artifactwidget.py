@@ -19,9 +19,13 @@ sys.path.append("../scripts")
 from artifact import Artifact
 from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
 
+import numpy as np
+
 class ArtifactWidget(QFrame):
     artifactSelectedSignal = Signal()
     artifactSavedSignal = Signal(Artifact)
+    processImgSignal = Signal(np.ndarray)
+    
     def __init__(self):
         super().__init__()
         
@@ -98,6 +102,14 @@ class ArtifactWidget(QFrame):
     def pasteImage(self, img):
         self.label.setPixmap(QPixmap.fromImage(img))
         self.label.setText("")
+        # create the array from image
+        img_size = img.size()
+        buffer = img.constBits()
+        arr = np.ndarray(shape  = (img_size.height(), img_size.width(), img.depth()//8),
+                     buffer = buffer, 
+                     dtype  = np.uint8)
+        arr = arr[:,:,:3] # clip the A buffer off
+        self.processImgSignal.emit(arr)
             
         
     def makeMainDropdown(self):
@@ -216,6 +228,117 @@ class ArtifactWidget(QFrame):
                     subdict['defperc'] = subval
                 
         return subdict
+    
+    def loadArtifactStats(self, artifact):
+        self.loadArtifactMainStats(artifact)
+        self.loadArtifactSubStats(artifact)
+    
+    def loadArtifactMainStats(self, artifact):
+        if artifact.mainhpraw is not None:
+            self.maindropdown.setCurrentText("HP")
+            self.mainedit.setText(str(artifact.mainhpraw))
+        elif artifact.mainatkraw is not None:
+            self.maindropdown.setCurrentText("ATK")
+            self.mainedit.setText(str(artifact.mainatkraw))
+        elif artifact.mainhpperc is not None:
+            self.maindropdown.setCurrentText("HP%")
+            self.mainedit.setText(str(artifact.mainhpperc))
+        elif artifact.mainatkperc is not None:
+            self.maindropdown.setCurrentText("ATK%")
+            self.mainedit.setText(str(artifact.mainatkperc))
+        elif artifact.maindefperc is not None:
+            self.maindropdown.setCurrentText("DEF%")
+            self.mainedit.setText(str(artifact.maindefperc))
+        elif artifact.mainer is not None:
+            self.maindropdown.setCurrentText("Energy Recharge")
+            self.mainedit.setText(str(artifact.mainer))
+        elif artifact.mainem is not None:
+            self.maindropdown.setCurrentText("Elemental Mastery")
+            self.mainedit.setText(str(artifact.mainer))
+        elif artifact.maincritrate is not None:
+            self.maindropdown.setCurrentText("CRIT Rate%")
+            self.mainedit.setText(str(artifact.maincritrate))
+        elif artifact.maincritdmg is not None:
+            self.maindropdown.setCurrentText("CRIT DMG%")
+            self.mainedit.setText(str(artifact.maincritdmg))
+        elif artifact.mainhealing is not None:
+            self.maindropdown.setCurrentText("Healing Bonus%")
+            self.mainedit.setText(str(artifact.mainhealing))
+        elif artifact.maincryo is not None:
+            self.maindropdown.setCurrentText("Cryo DMG Bonus%")
+            self.mainedit.setText(str(artifact.maincryo))
+        elif artifact.mainanemo is not None:
+            self.maindropdown.setCurrentText("Anemo DMG Bonus%")
+            self.mainedit.setText(str(artifact.mainanemo))
+        elif artifact.maingeo is not None:
+            self.maindropdown.setCurrentText("Geo DMG Bonus%")
+            self.mainedit.setText(str(artifact.maingeo))
+        elif artifact.mainpyro is not None:
+            self.maindropdown.setCurrentText("Pyro DMG Bonus%")
+            self.mainedit.setText(str(artifact.mainpyro))
+        elif artifact.mainhydro is not None:
+            self.maindropdown.setCurrentText("Hydro DMG Bonus%")
+            self.mainedit.setText(str(artifact.mainhydro))
+        elif artifact.mainelec is not None:
+            self.maindropdown.setCurrentText("Electro DMG Bonus%")
+            self.mainedit.setText(str(artifact.mainelec))
+        elif artifact.mainphys is not None:
+            self.maindropdown.setCurrentText("Physical DMG Bonus%")
+            self.mainedit.setText(str(artifact.mainphys))
+            
+    def loadArtifactSubStats(self, artifact):
+        i = 0
+
+        if artifact.atkraw is not None:
+            self.subdropdowns[i].setCurrentText("ATK")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.atkraw))
+            i = i + 1
+        if artifact.atkperc is not None:
+            self.subdropdowns[i].setCurrentText("ATK%")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.atkperc))
+            i = i + 1
+        if artifact.hpraw is not None:
+            self.subdropdowns[i].setCurrentText("HP")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.hpraw))
+            i = i + 1
+        if artifact.hpperc is not None:
+            self.subdropdowns[i].setCurrentText("HP%")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.hpperc))
+            i = i + 1
+        if artifact.critrate is not None:
+            self.subdropdowns[i].setCurrentText("CRIT Rate%")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.critrate))
+            i = i + 1
+        if artifact.critdmg is not None:
+            self.subdropdowns[i].setCurrentText("CRIT DMG%")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.critdmg))
+            i = i + 1
+        if artifact.em is not None:
+            self.subdropdowns[i].setCurrentText("Elemental Mastery")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.em))
+            i = i + 1
+        if artifact.er is not None:
+            self.subdropdowns[i].setCurrentText("Energy Recharge")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.er))
+            i = i + 1
+        if artifact.defraw is not None:
+            self.subdropdowns[i].setCurrentText("DEF")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.defraw))
+            i = i + 1
+        if artifact.defperc is not None:
+            self.subdropdowns[i].setCurrentText("DEF%")
+            self.subedits[i].setEnabled(True)
+            self.subedits[i].setText(str(artifact.defperc))
+            i = i + 1
     
     def on_save_error(self, e):
         msgbox = QMessageBox()
