@@ -4,8 +4,17 @@ A Pyside2 (Qt) application that calculates and compares your [Genshin Impact](ht
 
 ## Requirements
 ```bash
-pip install pytesseract pillow scikit-image pyside2 numpy
+pip install pytesseract pillow scikit-image pyside2 numpy cython
 ```
+
+The newest iteration which uses the tesseract API requires the tesseract and leptonica libraries. On linux this is done via
+
+```bash
+sudo apt-get install libtesseract4 libtesseract-dev
+```
+
+On Windows, please install [vcpkg](https://github.com/microsoft/vcpkg) and use that to install tesseract and leptonica. The official tesseract documentation contains the help needed.
+
 ## Folder organisation (for testing)
 
     CWD

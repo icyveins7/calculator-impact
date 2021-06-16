@@ -96,7 +96,14 @@ class ArtifactWidget(QFrame):
     
     @Slot()
     def reset(self):
+        self.label.clear() # this should remove the image as well
         self.label.setText(self.labeltext)
+        self.maindropdown.setCurrentIndex(0)
+        self.mainedit.setText("")
+        for i in range(len(self.subedits)):
+            self.subedits[i].setText("")
+            self.subedits[i].setEnabled(False)
+            self.subdropdowns[i].setCurrentIndex(0)
     
     @Slot(QImage)
     def pasteImage(self, img):
@@ -354,13 +361,14 @@ class FlowerWidget(ArtifactWidget):
     def __init__(self):
         super().__init__()
         self.labeltext = "Paste your Flower image here."
-        self.reset()
         
         # Define available stats
         self.mainstatstrs = ['HP']
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
+        
+        self.reset()
         
     #%% Virtuals
     @Slot()
@@ -373,6 +381,8 @@ class FlowerWidget(ArtifactWidget):
             # emit the signal
             self.artifactSavedSignal.emit(flower)
             
+            self.reset()
+            
         except Exception as e:
             self.on_save_error(e)
 
@@ -381,13 +391,14 @@ class FeatherWidget(ArtifactWidget):
     def __init__(self):
         super().__init__()
         self.labeltext = "Paste your Feather image here."
-        self.reset()
 
         # Define available stats
         self.mainstatstrs = ['ATK']
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
+        
+        self.reset()
         
     #%% Virtuals
     @Slot()
@@ -399,6 +410,8 @@ class FeatherWidget(ArtifactWidget):
             feather = Feather.fromDictionary(fulldict)
             # emit the signal
             self.artifactSavedSignal.emit(feather)
+            
+            self.reset()
         except Exception as e:
             self.on_save_error(e)
         
@@ -407,13 +420,14 @@ class TimepieceWidget(ArtifactWidget):
     def __init__(self):
         super().__init__()
         self.labeltext = "Paste your Timepiece image here."
-        self.reset()
-        
+
         # Define available stats
         self.mainstatstrs = ['HP%','ATK%','DEF%','Energy Recharge','Elemental Mastery']
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
+
+        self.reset()        
         
     #%% Virtuals
     @Slot()
@@ -425,6 +439,8 @@ class TimepieceWidget(ArtifactWidget):
             timepiece = Timepiece.fromDictionary(fulldict)
             # emit the signal
             self.artifactSavedSignal.emit(timepiece)
+            
+            self.reset()
         except Exception as e:
             self.on_save_error(e)
 
@@ -433,7 +449,6 @@ class GobletWidget(ArtifactWidget):
     def __init__(self):
         super().__init__()
         self.labeltext = "Paste your Goblet image here."
-        self.reset()
         
         # Define available stats
         self.mainstatstrs = ['HP%','ATK%','DEF%','Elemental Mastery',
@@ -443,6 +458,8 @@ class GobletWidget(ArtifactWidget):
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
+        
+        self.reset()
         
     #%% Virtuals
     @Slot()
@@ -454,6 +471,8 @@ class GobletWidget(ArtifactWidget):
             goblet = Goblet.fromDictionary(fulldict)
             # emit the signal
             self.artifactSavedSignal.emit(goblet)
+            
+            self.reset()
         except Exception as e:
             self.on_save_error(e)
 
@@ -462,13 +481,14 @@ class HeadpieceWidget(ArtifactWidget):
     def __init__(self):
         super().__init__()
         self.labeltext = "Paste your Headpiece image here."
-        self.reset()
         
         # Define available stats
         self.mainstatstrs = ['HP%','ATK%','DEF%','CRIT Rate%','CRIT DMG%','Healing Bonus%']
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
+        
+        self.reset()
         
     #%% Virtuals
     @Slot()
@@ -480,5 +500,7 @@ class HeadpieceWidget(ArtifactWidget):
             headpiece = Headpiece.fromDictionary(fulldict)
             # emit the signal
             self.artifactSavedSignal.emit(headpiece)
+            
+            self.reset()
         except Exception as e:
             self.on_save_error(e)
