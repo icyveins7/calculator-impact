@@ -24,7 +24,6 @@ import numpy as np
 class ArtifactWidget(QFrame):
     artifactSelectedSignal = Signal()
     artifactSavedSignal = Signal(Artifact)
-    processImgSignal = Signal(np.ndarray)
     
     def __init__(self):
         super().__init__()
@@ -46,9 +45,9 @@ class ArtifactWidget(QFrame):
         
         # Define available stats and create dropdowns (in derived classes)
         self.mainstatstrs = [] # this must be redefined per child class
-        self.substatstrs = ['', 'ATK', 'ATK%', 'HP', 'HP%', 'CRIT Rate%',
-                            'CRIT DMG%', 'Elemental Mastery', 'Energy Recharge',
-                            'DEF', 'DEF%'] # mostly the same, so defined here
+        self.substatstrs = ['']
+        allstatstrs = Artifact.getStatString() # get the dictionary of strings
+        self.substatstrs.extend(list(v for k,v in allstatstrs.items() if "main" not in k))
         
         # call makeMainDropdown() and makeSubDropdowns() in children
         self.maindropdown = None
@@ -61,9 +60,9 @@ class ArtifactWidget(QFrame):
     def on_savebtn_pressed(self):
         # Main stat
         maindict = self.processMainStatEdit()
-        # Substats
-        subdict = self.processSubstatEdits()
-        
+        # Substats (need handling because repeat substats not handled by class)
+        subdict = self.processSubstatEdits() # handling done in derived classes
+
         # Return everything in one dict
         return {**maindict, **subdict}
     
@@ -109,16 +108,7 @@ class ArtifactWidget(QFrame):
     def pasteImage(self, img):
         self.label.setPixmap(QPixmap.fromImage(img))
         self.label.setText("")
-        # create the array from image
-        img_size = img.size()
-        buffer = img.constBits()
-        arr = np.ndarray(shape  = (img_size.height(), img_size.width(), img.depth()//8),
-                     buffer = buffer, 
-                     dtype  = np.uint8)
-        arr = arr[:,:,:3] # clip the A buffer off
-        self.processImgSignal.emit(arr)
             
-        
     def makeMainDropdown(self):
         dropdown = QComboBox(self)
         dropdown.addItems(self.mainstatstrs)
@@ -165,40 +155,8 @@ class ArtifactWidget(QFrame):
         mainvalue = float(self.mainedit.text())
         maindict = {}
         
-        if mainstatstr == "HP":
-            maindict['mainhpraw'] = mainvalue
-        elif mainstatstr == "ATK":
-            maindict['mainatkraw'] = mainvalue
-        elif mainstatstr == "HP%":
-            maindict['mainhpperc'] = mainvalue
-        elif mainstatstr == "ATK%":
-            maindict['mainatkperc'] = mainvalue
-        elif mainstatstr == "DEF%":
-            maindict['maindefperc'] = mainvalue
-        elif mainstatstr == "Energy Recharge":
-            maindict['mainer'] = mainvalue
-        elif mainstatstr == "Elemental Mastery":
-            maindict['mainem'] = mainvalue
-        elif mainstatstr == "CRIT Rate%":
-            maindict['maincritrate'] = mainvalue
-        elif mainstatstr == "CRIT DMG%":
-            maindict['maincritdmg'] = mainvalue
-        elif mainstatstr == "Healing Bonus%":
-            maindict['mainhealing'] = mainvalue
-        elif mainstatstr == "Cryo DMG Bonus%":
-            maindict['maincryo'] = mainvalue
-        elif mainstatstr == "Anemo DMG Bonus%":
-            maindict['mainanemo'] = mainvalue
-        elif mainstatstr == "Geo DMG Bonus%":
-            maindict['maingeo'] = mainvalue
-        elif mainstatstr == "Pyro DMG Bonus%":
-            maindict['mainpyro'] = mainvalue
-        elif mainstatstr == "Hydro DMG Bonus%":
-            maindict['mainhydro'] = mainvalue
-        elif mainstatstr == "Electro DMG Bonus%":
-            maindict['mainelec'] = mainvalue
-        elif mainstatstr == "Physical DMG Bonus%":
-            maindict['mainphys'] = mainvalue
+        mainkey = Artifact.getMainStatKey(mainstatstr)
+        maindict[mainkey] = mainvalue
             
         return maindict
     
@@ -211,141 +169,30 @@ class ArtifactWidget(QFrame):
                 # get the substat
                 subtxt = self.subdropdowns[i].currentText()
                 subval = float(self.subedits[i].text())
-                
-                # maintain this ordering
-                if subtxt == 'ATK':
-                    subdict['atkraw'] = subval
-                elif subtxt == 'ATK%':
-                    subdict['atkperc'] = subval
-                elif subtxt == 'HP':
-                    subdict['hpraw'] = subval
-                elif subtxt == 'HP%':
-                    subdict['hpperc'] = subval
-                elif subtxt == 'CRIT Rate%':
-                    subdict['critrate'] = subval
-                elif subtxt == 'CRIT DMG%':
-                    subdict['critdmg'] = subval
-                elif subtxt == 'Elemental Mastery':
-                    subdict['em'] = subval
-                elif subtxt == 'Energy Recharge':
-                    subdict['er'] = subval
-                elif subtxt == 'DEF':
-                    subdict['defraw'] = subval
-                elif subtxt == 'DEF%':
-                    subdict['defperc'] = subval
+
+                # get the key
+                subkey = Artifact.getSubStatKey(subtxt)
+                if subkey in subdict.keys():
+                    raise ValueError("Repeat substat not allowed.")
+
+                subdict[subkey] = subval
                 
         return subdict
     
     def loadArtifactStats(self, artifact):
-        self.loadArtifactMainStats(artifact)
-        self.loadArtifactSubStats(artifact)
-    
-    def loadArtifactMainStats(self, artifact):
-        if artifact.mainhpraw is not None:
-            self.maindropdown.setCurrentText("HP")
-            self.mainedit.setText(str(artifact.mainhpraw))
-        elif artifact.mainatkraw is not None:
-            self.maindropdown.setCurrentText("ATK")
-            self.mainedit.setText(str(artifact.mainatkraw))
-        elif artifact.mainhpperc is not None:
-            self.maindropdown.setCurrentText("HP%")
-            self.mainedit.setText(str(artifact.mainhpperc))
-        elif artifact.mainatkperc is not None:
-            self.maindropdown.setCurrentText("ATK%")
-            self.mainedit.setText(str(artifact.mainatkperc))
-        elif artifact.maindefperc is not None:
-            self.maindropdown.setCurrentText("DEF%")
-            self.mainedit.setText(str(artifact.maindefperc))
-        elif artifact.mainer is not None:
-            self.maindropdown.setCurrentText("Energy Recharge")
-            self.mainedit.setText(str(artifact.mainer))
-        elif artifact.mainem is not None:
-            self.maindropdown.setCurrentText("Elemental Mastery")
-            self.mainedit.setText(str(artifact.mainer))
-        elif artifact.maincritrate is not None:
-            self.maindropdown.setCurrentText("CRIT Rate%")
-            self.mainedit.setText(str(artifact.maincritrate))
-        elif artifact.maincritdmg is not None:
-            self.maindropdown.setCurrentText("CRIT DMG%")
-            self.mainedit.setText(str(artifact.maincritdmg))
-        elif artifact.mainhealing is not None:
-            self.maindropdown.setCurrentText("Healing Bonus%")
-            self.mainedit.setText(str(artifact.mainhealing))
-        elif artifact.maincryo is not None:
-            self.maindropdown.setCurrentText("Cryo DMG Bonus%")
-            self.mainedit.setText(str(artifact.maincryo))
-        elif artifact.mainanemo is not None:
-            self.maindropdown.setCurrentText("Anemo DMG Bonus%")
-            self.mainedit.setText(str(artifact.mainanemo))
-        elif artifact.maingeo is not None:
-            self.maindropdown.setCurrentText("Geo DMG Bonus%")
-            self.mainedit.setText(str(artifact.maingeo))
-        elif artifact.mainpyro is not None:
-            self.maindropdown.setCurrentText("Pyro DMG Bonus%")
-            self.mainedit.setText(str(artifact.mainpyro))
-        elif artifact.mainhydro is not None:
-            self.maindropdown.setCurrentText("Hydro DMG Bonus%")
-            self.mainedit.setText(str(artifact.mainhydro))
-        elif artifact.mainelec is not None:
-            self.maindropdown.setCurrentText("Electro DMG Bonus%")
-            self.mainedit.setText(str(artifact.mainelec))
-        elif artifact.mainphys is not None:
-            self.maindropdown.setCurrentText("Physical DMG Bonus%")
-            self.mainedit.setText(str(artifact.mainphys))
-            
-    def loadArtifactSubStats(self, artifact):
+        statdict = Artifact.getStatString(None)
+        
         i = 0
-
-        if artifact.atkraw is not None:
-            self.subdropdowns[i].setCurrentText("ATK")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.atkraw))
-            i = i + 1
-        if artifact.atkperc is not None:
-            self.subdropdowns[i].setCurrentText("ATK%")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.atkperc))
-            i = i + 1
-        if artifact.hpraw is not None:
-            self.subdropdowns[i].setCurrentText("HP")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.hpraw))
-            i = i + 1
-        if artifact.hpperc is not None:
-            self.subdropdowns[i].setCurrentText("HP%")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.hpperc))
-            i = i + 1
-        if artifact.critrate is not None:
-            self.subdropdowns[i].setCurrentText("CRIT Rate%")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.critrate))
-            i = i + 1
-        if artifact.critdmg is not None:
-            self.subdropdowns[i].setCurrentText("CRIT DMG%")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.critdmg))
-            i = i + 1
-        if artifact.em is not None:
-            self.subdropdowns[i].setCurrentText("Elemental Mastery")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.em))
-            i = i + 1
-        if artifact.er is not None:
-            self.subdropdowns[i].setCurrentText("Energy Recharge")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.er))
-            i = i + 1
-        if artifact.defraw is not None:
-            self.subdropdowns[i].setCurrentText("DEF")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.defraw))
-            i = i + 1
-        if artifact.defperc is not None:
-            self.subdropdowns[i].setCurrentText("DEF%")
-            self.subedits[i].setEnabled(True)
-            self.subedits[i].setText(str(artifact.defperc))
-            i = i + 1
+        for key, string in statdict.items():
+            if getattr(artifact, key) is not None:
+                if "main" in key:
+                    self.maindropdown.setCurrentText(string)
+                    self.mainedit.setText(str(getattr(artifact, key)))
+                else:
+                    self.subdropdowns[i].setCurrentText(string)
+                    self.subedits[i].setEnabled(True)
+                    self.subedits[i].setText(str(getattr(artifact, key)))
+                    i = i + 1
     
     def on_save_error(self, e):
         msgbox = QMessageBox()
@@ -363,7 +210,7 @@ class FlowerWidget(ArtifactWidget):
         self.labeltext = "Paste your Flower image here."
         
         # Define available stats
-        self.mainstatstrs = ['HP']
+        self.mainstatstrs = list(Flower.getMainStatKey(None).keys())
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
@@ -373,9 +220,10 @@ class FlowerWidget(ArtifactWidget):
     #%% Virtuals
     @Slot()
     def on_savebtn_pressed(self):
-        # call the parent method
-        fulldict = super().on_savebtn_pressed()
         try:
+            # call the parent method
+            fulldict = super().on_savebtn_pressed()
+            
             # create the slot artifact
             flower = Flower.fromDictionary(fulldict)
             # emit the signal
@@ -393,7 +241,7 @@ class FeatherWidget(ArtifactWidget):
         self.labeltext = "Paste your Feather image here."
 
         # Define available stats
-        self.mainstatstrs = ['ATK']
+        self.mainstatstrs = list(Feather.getMainStatKey(None).keys())
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
@@ -403,9 +251,10 @@ class FeatherWidget(ArtifactWidget):
     #%% Virtuals
     @Slot()
     def on_savebtn_pressed(self):
-        # call the parent method
-        fulldict = super().on_savebtn_pressed()
         try:
+            # call the parent method
+            fulldict = super().on_savebtn_pressed()
+            
             # create the slot artifact
             feather = Feather.fromDictionary(fulldict)
             # emit the signal
@@ -422,7 +271,7 @@ class TimepieceWidget(ArtifactWidget):
         self.labeltext = "Paste your Timepiece image here."
 
         # Define available stats
-        self.mainstatstrs = ['HP%','ATK%','DEF%','Energy Recharge','Elemental Mastery']
+        self.mainstatstrs = list(Timepiece.getMainStatKey(None).keys())
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
@@ -432,9 +281,10 @@ class TimepieceWidget(ArtifactWidget):
     #%% Virtuals
     @Slot()
     def on_savebtn_pressed(self):
-        # call the parent method
-        fulldict = super().on_savebtn_pressed()
         try:
+            # call the parent method
+            fulldict = super().on_savebtn_pressed()
+            
             # create the slot artifact
             timepiece = Timepiece.fromDictionary(fulldict)
             # emit the signal
@@ -451,9 +301,7 @@ class GobletWidget(ArtifactWidget):
         self.labeltext = "Paste your Goblet image here."
         
         # Define available stats
-        self.mainstatstrs = ['HP%','ATK%','DEF%','Elemental Mastery',
-                             'Cryo DMG Bonus%', 'Anemo DMG Bonus%', 'Geo DMG Bonus%', 'Pyro DMG Bonus%',
-                             'Hydro DMG Bonus%', 'Electro DMG Bonus%', 'Physical DMG Bonus%']
+        self.mainstatstrs = list(Goblet.getMainStatKey(None).keys())
         
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
@@ -464,9 +312,10 @@ class GobletWidget(ArtifactWidget):
     #%% Virtuals
     @Slot()
     def on_savebtn_pressed(self):
-        # call the parent method
-        fulldict = super().on_savebtn_pressed()
         try:
+            # call the parent method
+            fulldict = super().on_savebtn_pressed()
+            
             # create the slot artifact
             goblet = Goblet.fromDictionary(fulldict)
             # emit the signal
@@ -483,7 +332,7 @@ class HeadpieceWidget(ArtifactWidget):
         self.labeltext = "Paste your Headpiece image here."
         
         # Define available stats
-        self.mainstatstrs = ['HP%','ATK%','DEF%','CRIT Rate%','CRIT DMG%','Healing Bonus%']
+        self.mainstatstrs = list(Headpiece.getMainStatKey(None).keys())
         # Call the dropdown creators
         self.maindropdown, self.mainedit = self.makeMainDropdown()
         self.subdropdowns, self.subedits = self.makeSubDropdowns()
@@ -493,9 +342,10 @@ class HeadpieceWidget(ArtifactWidget):
     #%% Virtuals
     @Slot()
     def on_savebtn_pressed(self):
-        # call the parent method
-        fulldict = super().on_savebtn_pressed()
         try:
+            # call the parent method
+            fulldict = super().on_savebtn_pressed()
+            
             # create the slot artifact
             headpiece = Headpiece.fromDictionary(fulldict)
             # emit the signal

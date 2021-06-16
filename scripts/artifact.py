@@ -99,6 +99,75 @@ class Artifact:
         if self.maincritdmg is not None and self.critdmg is not None:
             raise ValueError("Cannot have both main/sub stats as CRIT DMG%.")
 
+    @staticmethod
+    def getStatString(mainstatkey=None):
+        stringdict = {"mainhpraw": "HP",
+                      "mainatkraw": "ATK",
+                      "mainhpperc": "HP%",
+                      "mainatkperc": "ATK%",
+                      "maindefperc": "DEF%",
+                      "mainer": "Energy Recharge",
+                      "mainem": "Elemental Mastery",
+                      "maincritrate": "CRIT Rate%",
+                      "maincritdmg": "CRIT DMG%",
+                      "mainhealing": "Healing Bonus%",
+                      "maincryo": "Cryo DMG Bonus%",
+                      "mainanemo": "Anemo DMG Bonus%",
+                      "maingeo": "Geo DMG Bonus%",
+                      "mainpyro": "Pyro DMG Bonus%",
+                      "mainhydro": "Hydro DMG Bonus%",
+                      "mainelec": "Electro DMG Bonus%",
+                      "mainphys": "Physical DMG Bonus%",
+                      "atkraw": "ATK",
+                      "atkperc": "ATK%",
+                      "hpraw": "HP",
+                      "hpperc": "HP%",
+                      "critrate": "CRIT Rate%",
+                      "critdmg": "CRIT DMG%",
+                      "em": "Elemental Mastery",
+                      "er": "Energy Recharge",
+                      "defraw": "DEF",
+                      "defperc": "DEF%"}
+        if mainstatkey is None:
+            return stringdict
+        else:
+            return stringdict[mainstatkey]
+    
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP": "mainhpraw",
+                   "ATK": "mainatkraw",
+                   "HP%": "mainhpperc",
+                   "ATK%": "mainatkperc", 
+                   "DEF%": "maindefperc", 
+                   "Energy Recharge": "mainer", 
+                   "Elemental Mastery": "mainem", 
+                   "CRIT Rate%": "maincritrate", 
+                   "CRIT DMG%": "maincritdmg", 
+                   "Healing Bonus%": "mainhealing", 
+                   "Cryo DMG Bonus%": "maincryo", 
+                   "Anemo DMG Bonus%": "mainanemo", 
+                   "Geo DMG Bonus%": "maingeo", 
+                   "Pyro DMG Bonus%": "mainpyro", 
+                   "Hydro DMG Bonus%": "mainhydro", 
+                   "Electro DMG Bonus%": "mainelec", 
+                   "Physical DMG Bonus%": "mainphys"}
+        return keydict[string]
+        
+    @staticmethod
+    def getSubStatKey(string):
+        keydict = {"ATK": "atkraw", 
+                   "ATK%": "atkperc", 
+                   "HP": "hpraw", 
+                   "HP%": "hpperc", 
+                   "CRIT Rate%": "critrate", 
+                   "CRIT DMG%": "critdmg", 
+                   "Elemental Mastery": "em", 
+                   "Energy Recharge": "er", 
+                   "DEF": "defraw", 
+                   "DEF%": "defperc"}
+        return keydict[string]
+
     @classmethod
     def fromDictionary(cls, d):
         '''

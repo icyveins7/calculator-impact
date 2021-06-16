@@ -22,8 +22,6 @@ from string_filtering import generate_dict
 import sys
 import os
 from artifact_slots import *
-import warnings
-from skimage.io import imread
 import matplotlib.pyplot as plt
 sys.path.append(os.path.join(os.getcwd(), "..","cpp"))
 sys.path.append(os.path.join(os.getcwd(), "..","scripts"))
@@ -93,7 +91,6 @@ class CIMainWindow(QMainWindow):
         for frame in self.artifactframelist:
             frame.artifactSelectedSignal.connect(self.deselectFrames)
             frame.artifactSavedSignal.connect(self.artifactlist.addArtifact)
-            frame.processImgSignal.connect(self.processImage)
         self.navbar.addTabBtn.clicked.connect(self.showAddTab)
         self.navbar.cmpTabBtn.clicked.connect(self.showCmpTab)
         self.navbar.settingsBtn.clicked.connect(self.showSettings)
@@ -127,13 +124,6 @@ class CIMainWindow(QMainWindow):
             else:
                 self.currentFrame = self.sender()
                 
-    @Slot(np.ndarray)
-    def processImage(self, img):
-        print("Landed in processImage slot")
-        results,myartifact,ax,image = generate_dict(img, self.citaw)
-        print(myartifact)
-        self.sender().loadArtifactStats(Artifact.fromDictionary(myartifact)) # you don't actually need the type here, the saving will do it for you
-    
     def keyPressEvent(self, e: QKeyEvent):
         super().keyPressEvent(e) # call the original one
         if (e.key() == Qt.Key_V and (e.modifiers() & Qt.ControlModifier)):
@@ -151,3 +141,16 @@ class CIMainWindow(QMainWindow):
                 if self.currentFrame is not None:
                     print("sending to frame")
                     self.currentFrame.pasteImage(img)
+                    
+                    # create the array from image
+                    img_size = img.size()
+                    buffer = img.constBits()
+                    arr = np.ndarray(shape  = (img_size.height(), img_size.width(), img.depth()//8),
+                                 buffer = buffer, 
+                                 dtype  = np.uint8)
+                    arr = arr[:,:,:3] # clip the A buffer off
+                    
+                    results,myartifact,ax,image = generate_dict(arr, self.citaw)
+                    print(myartifact)
+                    self.currentFrame.loadArtifactStats(Artifact.fromDictionary(myartifact)) # you don't actually need the type here, the saving will do it for you
+    

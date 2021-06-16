@@ -20,6 +20,14 @@ class Flower(Artifact):
         # Check the main stat is HP
         if self.mainhpraw is None:
             raise ValueError("Flower main stat must be HP.")
+    
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP": "mainhpraw"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
 
 #%%
 class Feather(Artifact):
@@ -33,6 +41,14 @@ class Feather(Artifact):
         # Check the main stat is ATK
         if self.mainatkraw is None:
             raise ValueError("Feather main stat must be ATK.")
+            
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"ATK": "mainatkraw"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
         
 #%%
 class Timepiece(Artifact):
@@ -48,6 +64,19 @@ class Timepiece(Artifact):
                                  self.mainem, self.mainer])
         if np.all(allowedMains==None):
             raise ValueError("Main stat must be HP%/ATK%/DEF%/ER/EM.")
+            
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP%": "mainhpperc",
+                   "ATK%": "mainatkperc", 
+                   "DEF%": "maindefperc", 
+                   "Energy Recharge": "mainer", 
+                   "Elemental Mastery": "mainem"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
+        
                 
 #%%
 class Goblet(Artifact):
@@ -65,6 +94,24 @@ class Goblet(Artifact):
         if np.all(allowedMains==None):
             raise ValueError("Main stat must be HP%/ATK%/DEF%/EM/ELE DMG%/PHYS DMG%.")
             
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP%": "mainhpperc",
+                   "ATK%": "mainatkperc", 
+                   "DEF%": "maindefperc", 
+                   "Elemental Mastery": "mainem",
+                   "Cryo DMG Bonus%": "maincryo", 
+                   "Anemo DMG Bonus%": "mainanemo", 
+                   "Geo DMG Bonus%": "maingeo", 
+                   "Pyro DMG Bonus%": "mainpyro", 
+                   "Hydro DMG Bonus%": "mainhydro", 
+                   "Electro DMG Bonus%": "mainelec", 
+                   "Physical DMG Bonus%": "mainphys"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
+            
 #%%
 class Headpiece(Artifact):
     def __init__(self, **kwds):
@@ -80,6 +127,18 @@ class Headpiece(Artifact):
         if np.all(allowedMains==None):
             raise ValueError("Main stat must be HP%/ATK%/DEF%/CRIT Rate/CRIT DMG/Healing Bonus.")
         
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP%": "mainhpperc",
+                   "ATK%": "mainatkperc", 
+                   "DEF%": "maindefperc", 
+                   "CRIT Rate%": "maincritrate", 
+                   "CRIT DMG%": "maincritdmg", 
+                   "Healing Bonus%": "mainhealing"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
         
 #%% Unit test
 if __name__ == "__main__":
