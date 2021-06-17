@@ -15,6 +15,7 @@ from ci_artifactwidget import ArtifactWidget, FlowerWidget, FeatherWidget, Timep
 from ci_artifactlistwidget import ArtifactListWidget, ArtifactListFrame
 from ci_navigationwidget import NavigationWidget
 from ci_settingsframe import SettingsFrame
+from ci_comparisonframe import ComparisonFrame
 
 import sqlite3 as sq
 
@@ -82,6 +83,11 @@ class CIMainWindow(QMainWindow):
         self.settingsFrame = SettingsFrame()
         self.centralLayout.addWidget(self.settingsFrame)
         self.settingsFrame.hide()
+        
+        #### Comparison Frame (hidden on start)
+        self.comparisonFrame = ComparisonFrame()
+        self.centralLayout.addWidget(self.comparisonFrame)
+        self.comparisonFrame.hide()
 
 
         ### Add stretch to layout after all frames
@@ -103,10 +109,15 @@ class CIMainWindow(QMainWindow):
             frame.show()
         # hide everything else
         self.settingsFrame.hide()
+        self.comparisonFrame.hide()
         
     @Slot()
     def showCmpTab(self):
-        print("Not implemented yet.")
+        self.comparisonFrame.show()
+        # hide everything else
+        for frame in self.artifactframelist:
+            frame.hide()
+        self.settingsFrame.hide()
         
     @Slot()
     def showSettings(self):
@@ -115,6 +126,7 @@ class CIMainWindow(QMainWindow):
         self.artifactlistframe.hide()
         for frame in self.artifactframelist:
             frame.hide()
+        self.comparisonFrame.hide()
 
     @Slot()
     def deselectFrames(self):
