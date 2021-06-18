@@ -5,7 +5,7 @@ Created on Sun May 30 13:36:15 2021
 @author: Seo
 """
 
-from PySide2.QtWidgets import QListWidget, QFrame, QVBoxLayout
+from PySide2.QtWidgets import QListWidget, QFrame, QVBoxLayout, QAbstractItemView
 from PySide2.QtWidgets import QPushButton, QComboBox, QHBoxLayout
 from PySide2.QtCore import QMimeData, QObject, Signal, Slot  
 from PySide2.QtGui import QImage, QPixmap
@@ -20,7 +20,13 @@ from artifact_db import ArtifactDB
 class ArtifactListFrame(QFrame):
     def __init__(self, con):
         super().__init__()
+        
+        # Stylesheeting
+        self.setStyleSheet("ArtifactListFrame{border-width: 0px;}")
+        self.setFixedWidth(192)
+
         self._widgetlayout = QVBoxLayout()
+        self._widgetlayout.setContentsMargins(2,0,0,0)
         self.setLayout(self._widgetlayout)
         
         # Create filter dropdown
@@ -29,7 +35,7 @@ class ArtifactListFrame(QFrame):
                                       'Timepieces','Goblets','Headpieces'])
         
         # Create clear button
-        self.clearbtn = QPushButton("Clear")
+        self.clearbtn = QPushButton("Clear All")
         
         # Create the ListWidget
         self.artifactlistwidget = ArtifactListWidget(con)
@@ -55,13 +61,26 @@ class ArtifactListWidget(QListWidget):
         self.ids = []
         # Load on init
         self.load()
+
+        # Set selection mode
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        
+    @Slot()
+    def load(self):
+        self.clear()
+        self.artifacts, self.ids = self.db.load(self.con)
         # Populate the list with loaded artifacts
         for artifact in self.artifacts:
             self.addItem(artifact.print())
         
-    def load(self):
-        self.artifacts, self.ids = self.db.load(self.con)
-        
+    @Slot(int)
+    def getSelected(self, idx):
+        print("Got idx " + str(idx))
+        selection = self.selectedIndexes()
+        selectionRowIdx = [i.row() for i in selection]
+        print(selectionRowIdx)
+        artifactsSelected = [self.artifacts[i] for i in selectionRowIdx]
+        print(artifactsSelected)
     
     @Slot()
     def clearArtifacts(self):
@@ -71,7 +90,7 @@ class ArtifactListWidget(QListWidget):
     @Slot(Artifact)
     def addArtifact(self, artifact):
         self.db.save(artifact, self.con)
-        self.addItem(artifact.print())
+        self.load() # refresh artifacts and ids
         
     @Slot(str)
     def filterArtifacts(self, filterstr):

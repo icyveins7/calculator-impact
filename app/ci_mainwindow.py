@@ -45,6 +45,7 @@ class CIMainWindow(QMainWindow):
         # Central Layout
         self._centralWidget = QWidget(self)
         self.centralLayout = QHBoxLayout()
+        self.centralLayout.setSpacing(0)
         self._centralWidget.setLayout(self.centralLayout)
         self.setCentralWidget(self._centralWidget)
         
@@ -91,7 +92,7 @@ class CIMainWindow(QMainWindow):
 
 
         ### Add stretch to layout after all frames
-        self.centralLayout.addStretch(0)
+        # self.centralLayout.addStretch(0)
         
         # Connections
         for frame in self.artifactframelist:
@@ -100,6 +101,7 @@ class CIMainWindow(QMainWindow):
         self.navbar.addTabBtn.clicked.connect(self.showAddTab)
         self.navbar.cmpTabBtn.clicked.connect(self.showCmpTab)
         self.navbar.settingsBtn.clicked.connect(self.showSettings)
+        self.comparisonFrame.insertRequestSignal.connect(self.artifactlist.getSelected)
 
 
     @Slot()

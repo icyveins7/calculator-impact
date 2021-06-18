@@ -32,14 +32,20 @@ class ArtifactWidget(QFrame):
         self.selected = False
         
         # Static widgets
+        buttonLayout = QHBoxLayout()
+        self.clearbtn = QPushButton("Clear")
+        buttonLayout.addWidget(self.clearbtn)
+        self.clearbtn.clicked.connect(self.reset)
+        
         self.savebtn = QPushButton("Save")
+        buttonLayout.addWidget(self.savebtn)
         self.savebtn.clicked.connect(self.on_savebtn_pressed)
         
         self.labeltext = "Paste your artifact image here."
         self.label = QLabel(self.labeltext)
         
         self._widgetlayout = QVBoxLayout()
-        self._widgetlayout.addWidget(self.savebtn)
+        self._widgetlayout.addLayout(buttonLayout)
         self._widgetlayout.addWidget(self.label)
         self.setLayout(self._widgetlayout)
         

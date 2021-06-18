@@ -180,16 +180,16 @@ class Artifact:
     def print(self):
         s = ""
         
-        s = s + self.typestr + "\n"
+        s = s + self.typestr + "\n----------\n"
         
         idx = [i for i, val in enumerate(self.mainstatlist) if val != None][0]
         # pretty printing based on if its % => move to end of string
         if self.mainstatstrs[idx][-1] == '%':
-            self.mainstatstr = '(Main) %s +%.1f%%' % (self.mainstatstrs[idx][:-1], self.mainstatlist[idx])
+            self.mainstatstr = '%s +%.1f%%' % (self.mainstatstrs[idx][:-1], self.mainstatlist[idx])
         else:
-            self.mainstatstr = '(Main) %s +%.1f' % (self.mainstatstrs[idx], self.mainstatlist[idx])
+            self.mainstatstr = '%s +%.1f' % (self.mainstatstrs[idx], self.mainstatlist[idx])
         # print(self.mainstatstr)
-        s = s + self.mainstatstr + "\n"
+        s = s + self.mainstatstr + "\n----------\n"
         
         # substat printing
         if self.atkraw is not None:
