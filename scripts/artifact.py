@@ -128,15 +128,7 @@ class Artifact:
                       "em": "Elemental Mastery",
                       "er": "Energy Recharge",
                       "defraw": "DEF",
-                      "defperc": "DEF%",
-                      "healing": "Healing Bonus%", # added the elementals again for easy direct querying (used in amalgamation)
-                      "cryo": "Cryo DMG Bonus%", 
-                      "anemo": "Anemo DMG Bonus%",
-                      "geo": "Geo DMG Bonus%",
-                      "pyro": "Pyro DMG Bonus%",
-                      "hydro": "Hydro DMG Bonus%",
-                      "elec": "Electro DMG Bonus%",
-                      "phys": "Physical DMG Bonus%"}
+                      "defperc": "DEF%"}
         
         if mainstatkey is None:
             return stringdict
@@ -225,7 +217,10 @@ class Artifact:
         # main stat is a superset of substats, we key by the shorter substat key
         for key in validmainkeys:
             strippedmainkey = key[4:]
-            output[strippedmainkey] = getattr(self, key)
+            if strippedmainkey in substatkeys: # for those mains that have an identical sub, use the sub as key
+                output[strippedmainkey] = getattr(self, key)
+            else: # otherwise for stuff like maincryo just use maincryo as the key
+                output[key] = getattr(self,key)
             
         for key in validsubkeys:
             if key in output.keys(): # then just add to it (actually, this should never happen since no stat repeats)

@@ -3,3 +3,5 @@
 *.obj
 *.db
 cpp/build
+app/build
+app/dist
