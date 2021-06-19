@@ -36,6 +36,7 @@ class ArtifactListFrame(QFrame):
         
         # Create clear button
         self.clearbtn = QPushButton("Clear All")
+        self.delbtn = QPushButton("Delete")
         
         # Create the ListWidget
         self.artifactlistwidget = ArtifactListWidget(con)
@@ -44,11 +45,13 @@ class ArtifactListFrame(QFrame):
         self.toplayout = QHBoxLayout()
         self.toplayout.addWidget(self.filterDropdown)
         self.toplayout.addWidget(self.clearbtn)
+        self.toplayout.addWidget(self.delbtn)
         self._widgetlayout.addLayout(self.toplayout)
         self._widgetlayout.addWidget(self.artifactlistwidget)
         
         # Connections
         self.clearbtn.clicked.connect(self.artifactlistwidget.clearArtifacts)
+        self.delbtn.clicked.connect(self.artifactlistwidget.delSelected)
         self.filterDropdown.textActivated.connect(self.artifactlistwidget.filterArtifacts)
 
 class ArtifactListWidget(QListWidget):
@@ -73,6 +76,17 @@ class ArtifactListWidget(QListWidget):
         # Populate the list with loaded artifacts
         for artifact in self.artifacts:
             self.addItem(artifact.print())
+        
+    @Slot()
+    def delSelected(self):
+        selection = self.selectedIndexes()
+        selectionRowIdx = [i.row() for i in selection]
+        # get the id list to remove
+        ids2del = [self.ids[i] for i in selectionRowIdx]
+        self.db.deleteRows(ids2del, self.con)
+        # reload
+        self.load()
+        
         
     @Slot(int)
     def getSelected(self, idx):

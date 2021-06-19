@@ -116,6 +116,7 @@ class CIMainWindow(QMainWindow):
         
     @Slot()
     def showCmpTab(self):
+        self.artifactlistframe.show()
         self.comparisonFrame.show()
         # hide everything else
         for frame in self.artifactframelist:
