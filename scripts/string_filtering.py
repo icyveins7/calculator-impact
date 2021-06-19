@@ -24,9 +24,10 @@ def check_stat(stat,strlist):
     max_val = max(values)
     index = values.index(max_val)
     
-    mean = np.mean(values)
+    # mean = np.mean(values) # why were we returning mean?
     
-    return (mean,strlist[index])
+    # return (mean,strlist[index])
+    return (max_val, strlist[index])
 
 mainstatstrs = ['HP', 'ATK', 'HP%', 'ATK%',\
             'DEF%', 'Energy Recharge', 'Elemental Mastery', 'CRIT Rate%',\

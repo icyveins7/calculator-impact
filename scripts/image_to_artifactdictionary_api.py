@@ -25,7 +25,7 @@ citaw = tessapi_wrapper.PyCITessApiWrapper()
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-ss_image = imread("F:/PycharmProjects/calculator-impact-imgs/6.png")
+ss_image = imread("F:/PycharmProjects/calculator-impact-imgs/5_1080.png")
 ss_image = ss_image[:,:,:3]
 
 #1, 6 Flower
