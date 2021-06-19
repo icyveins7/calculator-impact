@@ -18,6 +18,7 @@ class Artifact:
         
         # Type identifiers (0 - 5, 0 being plain artifact, 1-5 being slot number)
         self.type = 0
+        self.typestr = "Artifact"
         
         # Main stats which may clash
         self.mainhpraw = mainhpraw
@@ -127,7 +128,16 @@ class Artifact:
                       "em": "Elemental Mastery",
                       "er": "Energy Recharge",
                       "defraw": "DEF",
-                      "defperc": "DEF%"}
+                      "defperc": "DEF%",
+                      "healing": "Healing Bonus%", # added the elementals again for easy direct querying (used in amalgamation)
+                      "cryo": "Cryo DMG Bonus%", 
+                      "anemo": "Anemo DMG Bonus%",
+                      "geo": "Geo DMG Bonus%",
+                      "pyro": "Pyro DMG Bonus%",
+                      "hydro": "Hydro DMG Bonus%",
+                      "elec": "Electro DMG Bonus%",
+                      "phys": "Physical DMG Bonus%"}
+        
         if mainstatkey is None:
             return stringdict
         else:
@@ -177,6 +187,54 @@ class Artifact:
         return cls(**d)
         
 
+    def getAmalgamatedStats(self):
+        mainstatkeys = ["mainhpraw",
+                        "mainatkraw",
+                        "mainhpperc",
+                        "mainatkperc",
+                        "maindefperc",
+                        "mainer",
+                        "mainem",
+                        "maincritrate",
+                        "maincritdmg",
+                        "mainhealing",
+                        "maincryo",
+                        "mainanemo",
+                        "maingeo",
+                        "mainpyro",
+                        "mainhydro",
+                        "mainelec",
+                        "mainphys"]
+        substatkeys = ["atkraw",
+                       "atkperc",
+                       "hpraw",
+                       "hpperc",
+                       "critrate",
+                       "critdmg",
+                       "em",
+                       "er",
+                       "defraw",
+                       "defperc"]
+        
+        # Extract non-None values
+        validmainkeys = [key for key in mainstatkeys if getattr(self,key) is not None]
+        validsubkeys = [key for key in substatkeys if getattr(self,key) is not None]
+            
+        # Output
+        output = {}
+        # main stat is a superset of substats, we key by the shorter substat key
+        for key in validmainkeys:
+            strippedmainkey = key[4:]
+            output[strippedmainkey] = getattr(self, key)
+            
+        for key in validsubkeys:
+            if key in output.keys(): # then just add to it (actually, this should never happen since no stat repeats)
+                output[key] = output[key] + getattr(self, key)
+            else: # otherwise create the key
+                output[key] = getattr(self,key)
+        
+        return output
+                
     def print(self):
         s = ""
         

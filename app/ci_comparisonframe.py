@@ -10,6 +10,11 @@ from PySide2.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout
 from PySide2.QtWidgets import QTableWidget, QTableWidgetItem, QPushButton
 from PySide2.QtCore import Signal, Slot
 
+import sys
+sys.path.append("../scripts")
+from artifact import Artifact
+from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
+
 class HLine(QFrame):
     def __init__(self):
         super().__init__()
@@ -40,6 +45,14 @@ class ComparisonFrame(QFrame):
         self.headpiece1, self.headpiece2 = self.addColumn("Headpiece",True)
         
         self.summarytbl1, self.summarytbl2 = self.addSummaryTables()
+        self.resetTables() # reset and add headers
+        
+        # Dictionary for easy access
+        self.displays = {0:[self.flower1, self.feather1, self.timepiece1, self.goblet1, self.headpiece1],
+                         1:[self.flower2, self.feather2, self.timepiece2, self.goblet2, self.headpiece2]}
+        self.artifactholders = {0:{1:None,2:None,3:None,4:None,5:None},
+                                1:{1:None,2:None,3:None,4:None,5:None}}
+        self.tables = [self.summarytbl1, self.summarytbl2]
         
         # Connections
         self.add1btn.clicked.connect(self.add1btnClicked)
@@ -54,6 +67,48 @@ class ComparisonFrame(QFrame):
     def add2btnClicked(self):
         print("Request insert to btm")
         self.insertRequestSignal.emit(1)
+        
+    @Slot(list, int)
+    def insertArtifacts(self, artifactlist, idx):
+        for atype in range(1,6):
+            artifacts = [i for i in artifactlist if i.type==atype]
+            if len(artifacts) > 1:
+                raise TypeError("More than 1 %s selected." % (artifacts[0].typestr))
+            elif len(artifacts) > 0:
+                artifact = artifacts[0]
+                self.displays[idx][atype-1].setText(artifact.print())
+                # Set the artifact for this display for access by the table
+                self.artifactholders[idx][atype] = artifact
+                
+        # Update the table
+        self.updateTables()    
+        
+    @Slot()
+    def updateTables(self):
+        statdict = Artifact.getStatString()
+        self.resetTables() # reset both tables
+        
+        for i in range(2): # top/btm
+            valdicts = []
+            for j in range(1,6): # iterate over slot
+                if self.artifactholders[i][j] is not None:
+                    valdicts.append(self.artifactholders[i][j].getAmalgamatedStats())
+                    
+            combinedvals = {}
+            for d in valdicts:
+                combinedvals = {k: combinedvals.get(k, 0) + d.get(k, 0) for k in set(combinedvals) | set(d)}
+        
+            print(combinedvals)
+            # update the table
+            self.tables[i].setRowCount(1 + len(combinedvals.keys()))
+            row = 1
+            for key, value in combinedvals.items():
+                stringitem = QTableWidgetItem(statdict[key])
+                valitem = QTableWidgetItem("%.1f" % (value))
+                self.tables[i].setItem(row, 0, stringitem)
+                self.tables[i].setItem(row, 1, valitem)
+                row = row + 1
+                
         
     
     def addInsertButtons(self, leftvline=False, rightvline=False):
@@ -72,12 +127,12 @@ class ComparisonFrame(QFrame):
         
     def addColumn(self, typestring, leftvline=False, rightvline=False):
         top = QLabel("Select %s to compare" % (typestring))
-        top.setMinimumWidth(160)
+        top.setMinimumWidth(144)
         
         separator = HLine()
         
         bottom = QLabel("Select %s to compare" % (typestring))
-        bottom.setMinimumWidth(160)
+        bottom.setMinimumWidth(144)
         
         minilayout = QVBoxLayout()
         minilayout.addWidget(top)
@@ -107,15 +162,11 @@ class ComparisonFrame(QFrame):
         table2.verticalHeader().setVisible(False)
         table2.horizontalHeader().setVisible(False)
         
-        # Add Headers
-        tbl1stat = QTableWidgetItem("Stat")
-        tbl1val = QTableWidgetItem("Value")
-        tbl2stat = QTableWidgetItem("Stat")
-        tbl2val = QTableWidgetItem("Value")
-        table1.setItem(0,0,tbl1stat)
-        table1.setItem(0,1,tbl1val)
-        table2.setItem(0,0,tbl2stat)
-        table2.setItem(0,1,tbl2val)
+        # Column widths
+        table1.setColumnWidth(0, 144)
+        table1.setColumnWidth(1, 48)
+        table2.setColumnWidth(0, 144)
+        table2.setColumnWidth(1, 48)
         
         separator = HLine()
         
@@ -128,3 +179,18 @@ class ComparisonFrame(QFrame):
         self._widgetlayout.addWidget(vline2)
         
         return table1, table2
+    
+    def resetTables(self):
+        self.summarytbl1.clear()
+        self.summarytbl2.clear()
+        self.summarytbl1.setRowCount(1)
+        self.summarytbl2.setRowCount(1)
+        
+        self.tbl1stat = QTableWidgetItem("Stat")
+        self.tbl1val = QTableWidgetItem("Value")
+        self.tbl2stat = QTableWidgetItem("Stat")
+        self.tbl2val = QTableWidgetItem("Value")
+        self.summarytbl1.setItem(0,0,self.tbl1stat)
+        self.summarytbl1.setItem(0,1,self.tbl1val)
+        self.summarytbl2.setItem(0,0,self.tbl2stat)
+        self.summarytbl2.setItem(0,1,self.tbl2val)

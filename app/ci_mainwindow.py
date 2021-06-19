@@ -102,6 +102,7 @@ class CIMainWindow(QMainWindow):
         self.navbar.cmpTabBtn.clicked.connect(self.showCmpTab)
         self.navbar.settingsBtn.clicked.connect(self.showSettings)
         self.comparisonFrame.insertRequestSignal.connect(self.artifactlist.getSelected)
+        self.artifactlist.insertResponseSignal.connect(self.comparisonFrame.insertArtifacts)
 
 
     @Slot()

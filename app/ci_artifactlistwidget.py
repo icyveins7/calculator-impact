@@ -52,6 +52,7 @@ class ArtifactListFrame(QFrame):
         self.filterDropdown.textActivated.connect(self.artifactlistwidget.filterArtifacts)
 
 class ArtifactListWidget(QListWidget):
+    insertResponseSignal = Signal(list, int)
     def __init__(self, con):
         super().__init__()
         # Initialize the table
@@ -81,11 +82,14 @@ class ArtifactListWidget(QListWidget):
         print(selectionRowIdx)
         artifactsSelected = [self.artifacts[i] for i in selectionRowIdx]
         print(artifactsSelected)
+        self.insertResponseSignal.emit(artifactsSelected, idx)
     
     @Slot()
     def clearArtifacts(self):
         self.clear()
         self.db.clearTable(self.con)
+        self.artifacts = []
+        self.ids = []
     
     @Slot(Artifact)
     def addArtifact(self, artifact):
