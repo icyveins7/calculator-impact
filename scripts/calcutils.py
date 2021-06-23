@@ -101,7 +101,8 @@ def ocr_substat(img, citaw=None):
         result = pytesseract.image_to_string(img,config=custom_config)
         return result
     else:
-        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0], psm=13)  #can edit this according to the custom config above?
+        whitelist = "abcdefghiklmnoprstuyABCDEFGHIKLMNOPRSTUY"
+        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0], whitelist, psm=13)  #can edit this according to the custom config above?
         return result.decode('utf-8')
     
 
@@ -111,7 +112,8 @@ def ocr_values(img, citaw=None):
         result = pytesseract.image_to_string(img,config=custom_config)
         return result
     else:
-        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0])   #can edit this according to the custom config above?
+        whitelist = "0123456789.%"
+        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0], whitelist, psm=13)   #can edit this according to the custom config above?
         return result.decode('utf-8')
     
 

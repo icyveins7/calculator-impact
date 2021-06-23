@@ -53,6 +53,14 @@ int main()
     std::string output = citaw.eng_image_to_string(imgdata, 322, 42);
     printf("OCR output with class: \n%s", output.c_str());
 
+    // Test the class with a whitelist
+    std::string whitelist = "0123456789.%";
+    std::string output2 = citaw.eng_image_to_string(imgdata, 322, 42, whitelist);
+    printf("OCR output with class and whitelist: \n%s", output2.c_str());
+    
+    // Repeat it to show that setting whitelist to nothing will revert to default operations
+    std::string output3 = citaw.eng_image_to_string(imgdata, 322, 42);
+    printf("OCR output with class and no whitelist again: \n%s", output3.c_str());
 
     // Destroy used object and release memory
     api->End();

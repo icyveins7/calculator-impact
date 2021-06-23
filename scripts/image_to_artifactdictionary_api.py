@@ -34,7 +34,7 @@ ss_image = ss_image[:,:,:3]
 #4, 9 Goblet
 #5, 0 Headpiece
 
-results,myartifact,ax,image = generate_dict(ss_image, citaw)
+results,myartifact,ax,image = generate_dict(ss_image, 1080, 1920, citaw)
 
 print(results)
 print('\n')
@@ -43,4 +43,4 @@ print('\n')
 # artifact = Flower(**myartifact)
 # artifact.print()
 
-# ax.imshow(image)
+ax.imshow(image)

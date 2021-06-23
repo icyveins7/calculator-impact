@@ -166,7 +166,9 @@ class CIMainWindow(QMainWindow):
                                  dtype  = np.uint8)
                     arr = arr[:,:,:3] # clip the A buffer off
                     
-                    results,myartifact,ax,image = generate_dict(arr, self.citaw)
+                    results,myartifact,ax,image = generate_dict(arr, citaw=self.citaw) # api
+                    # results,myartifact,ax,image = generate_dict(arr) # pytesseract
+                    print(results)
                     print(myartifact)
                     self.currentFrame.loadArtifactStats(Artifact.fromDictionary(myartifact)) # you don't actually need the type here, the saving will do it for you
     

@@ -35,3 +35,8 @@ def citawtest(img, citaw):
 print("Testing output by passing cython object into function")
 output = citawtest(img, citaw)
 print(output)
+
+print("Testing whitelist")
+whitelist = "0123456789.%"
+output = citaw.image_to_string("eng", img.tobytes(), img.shape[1], img.shape[0], whitelist)
+print(output)

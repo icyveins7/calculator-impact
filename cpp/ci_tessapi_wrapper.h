@@ -36,7 +36,7 @@ class CITessApiWrapper
         }
         
         std::string eng_image_to_string(unsigned char *img, uint32_t width_pixels, uint32_t height_pixels,
-                                 int psm=3, int resolution=96)
+                                 std::string whitelist="", int psm=3, int resolution=96)
         {
             // memory for text
             char *outText;
@@ -44,6 +44,7 @@ class CITessApiWrapper
             // Set Image and Resolution
             engapi->SetImage(img, width_pixels, height_pixels, 3, 3*width_pixels);
             engapi->SetSourceResolution(resolution);
+            engapi->SetVariable("tessedit_char_whitelist", whitelist.c_str());
             // OCR Result
             engapi->SetPageSegMode(static_cast<tesseract::PageSegMode>(psm));
             outText = engapi->GetUTF8Text();
@@ -57,7 +58,7 @@ class CITessApiWrapper
         }
         
         std::string gs_image_to_string(unsigned char *img, uint32_t width_pixels, uint32_t height_pixels,
-                                int psm=3, int resolution=96)
+                                std::string whitelist="", int psm=3, int resolution=96)
         {
             // memory for text
             char *outText;
@@ -65,6 +66,7 @@ class CITessApiWrapper
             // Set Image and Resolution
             gsapi->SetImage(img, width_pixels, height_pixels, 3, 3*width_pixels);
             gsapi->SetSourceResolution(resolution);
+            gsapi->SetVariable("tessedit_char_whitelist", whitelist.c_str());
             // OCR Result
             gsapi->SetPageSegMode(static_cast<tesseract::PageSegMode>(psm));
             outText = gsapi->GetUTF8Text();

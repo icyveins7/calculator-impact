@@ -17,6 +17,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # ss_image = imread(os.getcwd()+r'\imgs\ss\65.png')
 ss_image = imread("F:/PycharmProjects/calculator-impact-labelled/image_2021-06-21_22-49-37.png")
 # ss_image = imread("F:/PycharmProjects/calculator-impact-labelled/image_2021-06-21_22-52-56.png")
+ss_image = imread("F:/PycharmProjects/calculator-impact-imgs/5_1080.png")
+ss_image = ss_image[:,:,:3]
 
 #1, 6 Flower
 #2, 7 Feather
@@ -24,7 +26,7 @@ ss_image = imread("F:/PycharmProjects/calculator-impact-labelled/image_2021-06-2
 #4, 9 Goblet
 #5, 0 Headpiece
 
-results,myartifact,ax,image = generate_dict(ss_image)
+results,myartifact,ax,image = generate_dict(ss_image, 1080, 1920)
 
 print('\nAfter OCR')
 print(results)
