@@ -6,7 +6,6 @@ Created on Mon May 17 01:43:45 2021
 """
 
 from PIL import Image
-import os
 import numpy as np
 from skimage.feature import match_template
 import pytesseract
@@ -92,15 +91,26 @@ def ocr_mainstat(img, citaw=None):
         img = np.fromstring(img.tobytes(), dtype=np.uint8)
         
         result = citaw.image_to_string("eng", img.tobytes(), width, height)
-    return result.decode('utf-8')
+    #return result.decode('utf-8')
+    return result
 
 def ocr_substat(img, citaw=None):
     if citaw is None:
-        custom_config = r'--oem 0 --psm 13 -l gs'
+        custom_config = r'--oem 0 --psm 13 -l gs -c tessedit_char_whitelist=abcdefghiklmnoprstuyABCDEFGHIKLMNOPRSTUY'   #removed j,q,v,w,x,z
         result = pytesseract.image_to_string(img,config=custom_config)
     else:
-        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0], psm=13)
-    return result.decode('utf-8')
+        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0], psm=13)  #can edit this according to the custom config above?
+    #return result.decode('utf-8')
+    return result
+
+def ocr_values(img, citaw=None):
+    if citaw is None:
+        custom_config = r'--oem 0 --psm 13 -l gs -c tessedit_char_whitelist=0123456789.%'
+        result = pytesseract.image_to_string(img,config=custom_config)
+    else:
+        result = citaw.image_to_string("gs", img.tobytes(), img.shape[1], img.shape[0])   #can edit this according to the custom config above?
+    #return result.decode('utf-8')
+    return result
 
 def split_substats(substat,plusbutton):
     m_substat,x_substat,y_substat = check_lock_button(plusbutton,rgb2gray(substat))

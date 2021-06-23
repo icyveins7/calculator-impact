@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-ss_image = imread(os.getcwd()+r'\imgs\ss\41.png')
+ss_image = imread(os.getcwd()+r'\imgs\ss\65.png')
 
 #1, 6 Flower
 #2, 7 Feather
@@ -24,9 +24,11 @@ ss_image = imread(os.getcwd()+r'\imgs\ss\41.png')
 
 results,myartifact,ax,image = generate_dict(ss_image)
 
+print('\nAfter OCR')
 print(results)
 print('\n')
-artifact = Flower(**myartifact)
+artifact = Headpiece(**myartifact)
+print('\nPrinting output on app:\n')
 artifact.print()
 
 ax.imshow(image)
