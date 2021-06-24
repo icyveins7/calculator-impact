@@ -27,3 +27,5 @@ class SettingsFrame(QFrame):
         
         return resDropdown
         
+    def getResolution(self):
+        return self.resDropdown.currentText()

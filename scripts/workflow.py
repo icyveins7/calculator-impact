@@ -13,11 +13,11 @@ import matplotlib.pyplot as plt
 def read_image_to_artifact(ss_height,ss_width,height,width,image,citaw=None):
     gray_image = rgb2gray(image)
     key = str(ss_height)+'_'+str(ss_width)
-    path=os.getcwd()+'\\..\\scripts\\templates\\'+key+'\\'
+    path= os.path.join(os.getcwd(),"..","scripts","templates",key)
     
-    lockbutton1=rgb2gray(io.imread(path+'lockbutton.png'))
-    lockbutton2=rgb2gray(io.imread(path+'lockbutton2.png'))
-    plusbutton = rgb2gray(io.imread(path+'plus_button.png'))
+    lockbutton1=rgb2gray(io.imread(os.path.join(path,'lockbutton.png')))
+    lockbutton2=rgb2gray(io.imread(os.path.join(path,'lockbutton2.png')))
+    plusbutton = rgb2gray(io.imread(os.path.join(path,'plus_button.png')))
 
     lockbutton1_prop,lockbutton2_prop = lock_button_init(lockbutton1,lockbutton2,gray_image)
 

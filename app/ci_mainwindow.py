@@ -166,6 +166,13 @@ class CIMainWindow(QMainWindow):
                                  dtype  = np.uint8)
                     arr = arr[:,:,:3] # clip the A buffer off
                     
+                    # Get the resolution
+                    currentResolution = self.settingsFrame.getResolution().split("x")
+                    print("Resolution is ")
+                    print(currentResolution)
+                    currentHeight = int(currentResolution[1])
+                    currentWidth = int(currentResolution[0])
+                    
                     results,myartifact,ax,image = generate_dict(arr, citaw=self.citaw) # api
                     # results,myartifact,ax,image = generate_dict(arr) # pytesseract
                     print(results)
