@@ -173,8 +173,8 @@ class CIMainWindow(QMainWindow):
                     currentHeight = int(currentResolution[1])
                     currentWidth = int(currentResolution[0])
                     
-                    results,myartifact,ax,image = generate_dict(arr, citaw=self.citaw) # api
-                    # results,myartifact,ax,image = generate_dict(arr) # pytesseract
+                    results,myartifact,ax,image = generate_dict(arr, currentHeight, currentWidth, citaw=self.citaw) # api
+                    # results,myartifact,ax,image = generate_dict(arr, currentHeight, currentWidth) # pytesseract
                     print(results)
                     print(myartifact)
                     self.currentFrame.loadArtifactStats(Artifact.fromDictionary(myartifact)) # you don't actually need the type here, the saving will do it for you
