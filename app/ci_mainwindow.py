@@ -156,7 +156,7 @@ class CIMainWindow(QMainWindow):
                 img = QImage(mime.imageData())
                 if self.currentFrame is not None:
                     print("sending to frame")
-                    self.currentFrame.pasteImage(img)
+                    # self.currentFrame.pasteImage(img)
                     
                     # create the array from image
                     img_size = img.size()
@@ -178,4 +178,11 @@ class CIMainWindow(QMainWindow):
                     print(results)
                     print(myartifact)
                     self.currentFrame.loadArtifactStats(Artifact.fromDictionary(myartifact)) # you don't actually need the type here, the saving will do it for you
+                    
+                    # recreate the qimage for display
+                    image = np.copy(image[:,:,:3], order='C') # need to copy into c-contiguous
+                    qimg = QImage(image, image.shape[1], image.shape[0], QImage.Format_RGB888)
+                    self.currentFrame.pasteImage(qimg)
+                    
+                    
     

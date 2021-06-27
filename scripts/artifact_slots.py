@@ -125,7 +125,7 @@ class Headpiece(Artifact):
         allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
                                  self.mainem, self.maincritrate, self.maincritdmg, self.mainhealing])
         if np.all(allowedMains==None):
-            raise ValueError("Main stat must be HP%/ATK%/DEF%/CRIT Rate/CRIT DMG/Healing Bonus.")
+            raise ValueError("Main stat must be HP%/ATK%/DEF%/CRIT Rate/CRIT DMG/Healing Bonus/Elemental Mastery.")
         
     @staticmethod
     def getMainStatKey(string=None):
@@ -134,7 +134,8 @@ class Headpiece(Artifact):
                    "DEF%": "maindefperc", 
                    "CRIT Rate%": "maincritrate", 
                    "CRIT DMG%": "maincritdmg", 
-                   "Healing Bonus%": "mainhealing"}
+                   "Healing Bonus%": "mainhealing",
+                   "Elemental Mastery": "mainem"}
         if string is None:
             return keydict
         else:

@@ -5,3 +5,4 @@
 cpp/build
 app/build
 app/dist
+*.so

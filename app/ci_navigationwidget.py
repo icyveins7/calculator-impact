@@ -103,6 +103,7 @@ class NavigationWidget(QGroupBox):
         self._widgetlayout.insertStretch(-1)
         
         # Styling
+        self.setMaximumWidth(96)
         self.setStyleSheet("QGroupBox{\
                            padding-right: -6px;\
                            border-width: 0px;\

@@ -11,8 +11,8 @@ from skimage.feature import match_template
 import pytesseract
 from skimage.color import rgb2gray
 
-def cropping(im):
-    height, width, channels = im.shape
+def cropping(im, height=1080, width=1920):
+    # height, width, channels = im.shape # using input args
     
     ratio_left = 0.75
     ratio_top = 0.15
