@@ -18,19 +18,24 @@ from ci_settingsframe import SettingsFrame
 from ci_comparisonframe import ComparisonFrame
 
 import sqlite3 as sq
-
-from string_filtering import generate_dict
 import sys
 import os
-from artifact_slots import *
-import matplotlib.pyplot as plt
-sys.path.append(os.path.join(os.getcwd(), "..","cpp"))
-sys.path.append(os.path.join(os.getcwd(), "..","scripts"))
-cwd = os.path.dirname(os.path.abspath(__file__))
-tessdata_dir = os.path.join(cwd,"..","tesseract_custom")
+# import matplotlib.pyplot as plt
+
+# sys.path.append(os.path.join(os.getcwd(), "..","cpp"))
+# sys.path.append(os.path.join(os.getcwd(), "..","scripts"))
+# cwd = os.path.dirname(os.path.abspath(__file__))
+# tessdata_dir = os.path.join(cwd,"..","tesseract_custom")
+
+# Change all inner imports without editing path
+tessdata_dir = os.path.join("..","tesseract_custom") # pure relative pointing
 os.environ["TESSDATA_PREFIX"] = tessdata_dir
 print("Set TESSDATA_PREFIX to %s" % (os.environ["TESSDATA_PREFIX"]))
-import tessapi_wrapper
+
+# Use folder for redirections
+import cpp.tessapi_wrapper as tessapi_wrapper
+from scripts.ocr_backend_combined import generate_dict
+from scripts.artifact import *
 
 class CIMainWindow(QMainWindow):
     # deselectFrameSignal = Signal()

@@ -11,9 +11,7 @@ from PySide2.QtWidgets import QTableWidget, QTableWidgetItem, QPushButton
 from PySide2.QtCore import Signal, Slot
 
 import sys
-sys.path.append("../scripts")
-from artifact import Artifact
-from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
+from scripts.artifact import *
 
 class HLine(QFrame):
     def __init__(self):

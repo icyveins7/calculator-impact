@@ -9,13 +9,13 @@ Created on Mon Jun 14 00:07:34 2021
 from string_filtering import generate_dict
 import sys
 import os
-from artifact_slots import *
+from artifact import *
 import warnings
 from skimage.io import imread
 import matplotlib.pyplot as plt
 sys.path.append(os.path.join(os.getcwd(), "..","cpp"))
 cwd = os.path.dirname(os.path.abspath(__file__))
-tessdata_dir = os.path.join(cwd,"..","tesseract_custom")
+tessdata_dir = os.path.join("..","..","tesseract_custom")
 os.environ["TESSDATA_PREFIX"] = tessdata_dir
 print("Set TESSDATA_PREFIX to %s" % (os.environ["TESSDATA_PREFIX"]))
 

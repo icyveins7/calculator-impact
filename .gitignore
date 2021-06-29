@@ -6,3 +6,6 @@ cpp/build
 app/build
 app/dist
 *.so
+app/cpp/build
+*.pyd
+*.exp

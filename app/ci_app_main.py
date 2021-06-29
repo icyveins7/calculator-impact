@@ -5,6 +5,9 @@ Created on Fri May 21 20:57:17 2021
 @author: Seo
 """
 
+import os
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = os.path.join(".","platforms")
+
 import sys
 from PySide2.QtWidgets import QApplication
 from ci_mainwindow import CIMainWindow

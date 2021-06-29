@@ -15,9 +15,7 @@ from PySide2.QtCore import Qt
 from ci_substatEdit import SubstatEdit
 
 import sys
-sys.path.append("../scripts")
-from artifact import Artifact
-from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
+from scripts.artifact import *
 
 import numpy as np
 

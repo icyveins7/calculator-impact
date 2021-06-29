@@ -5,6 +5,9 @@ Created on Sun May 16 17:39:27 2021
 @author: Seo
 """
 
+import numpy as np
+import sqlite3 as sq
+
 class Artifact:
     def __init__(self,
                  mainhpraw=None, mainatkraw=None, mainhpperc=None, mainatkperc=None,
@@ -280,4 +283,342 @@ class Artifact:
         
         return s
 
+#%%
+class Flower(Artifact):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
         
+        # Type
+        self.type = 1
+        self.typestr = "Flower"
+        
+        # Check the main stat is HP
+        if self.mainhpraw is None:
+            raise ValueError("Flower main stat must be HP.")
+    
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP": "mainhpraw"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
+
+#%%
+class Feather(Artifact):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+        
+        # Type
+        self.type = 2
+        self.typestr = "Feather"
+        
+        # Check the main stat is ATK
+        if self.mainatkraw is None:
+            raise ValueError("Feather main stat must be ATK.")
+            
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"ATK": "mainatkraw"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
+        
+#%%
+class Timepiece(Artifact):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+        
+        # Type
+        self.type = 3
+        self.typestr = "Timepiece"
+        
+        # Check main stats allowed
+        allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
+                                 self.mainem, self.mainer])
+        if np.all(allowedMains==None):
+            raise ValueError("Main stat must be HP%/ATK%/DEF%/ER/EM.")
+            
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP%": "mainhpperc",
+                   "ATK%": "mainatkperc", 
+                   "DEF%": "maindefperc", 
+                   "Energy Recharge": "mainer", 
+                   "Elemental Mastery": "mainem"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
+        
+                
+#%%
+class Goblet(Artifact):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+        
+        # Type
+        self.type = 4
+        self.typestr = "Goblet"
+        
+        # Check main stats allowed
+        allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
+                                 self.mainem, self.maincryo, self.mainanemo, self.maingeo,
+                                 self.mainpyro, self.mainhydro, self.mainelec, self.mainphys])
+        if np.all(allowedMains==None):
+            raise ValueError("Main stat must be HP%/ATK%/DEF%/EM/ELE DMG%/PHYS DMG%.")
+            
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP%": "mainhpperc",
+                   "ATK%": "mainatkperc", 
+                   "DEF%": "maindefperc", 
+                   "Elemental Mastery": "mainem",
+                   "Cryo DMG Bonus%": "maincryo", 
+                   "Anemo DMG Bonus%": "mainanemo", 
+                   "Geo DMG Bonus%": "maingeo", 
+                   "Pyro DMG Bonus%": "mainpyro", 
+                   "Hydro DMG Bonus%": "mainhydro", 
+                   "Electro DMG Bonus%": "mainelec", 
+                   "Physical DMG Bonus%": "mainphys"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
+            
+#%%
+class Headpiece(Artifact):
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+        
+        # Type
+        self.type = 5
+        self.typestr = "Headpiece"
+        
+        # Check main stats allowed
+        allowedMains = np.array([self.mainhpperc, self.mainatkperc, self.maindefperc,
+                                 self.mainem, self.maincritrate, self.maincritdmg, self.mainhealing])
+        if np.all(allowedMains==None):
+            raise ValueError("Main stat must be HP%/ATK%/DEF%/CRIT Rate/CRIT DMG/Healing Bonus/Elemental Mastery.")
+        
+    @staticmethod
+    def getMainStatKey(string=None):
+        keydict = {"HP%": "mainhpperc",
+                   "ATK%": "mainatkperc", 
+                   "DEF%": "maindefperc", 
+                   "CRIT Rate%": "maincritrate", 
+                   "CRIT DMG%": "maincritdmg", 
+                   "Healing Bonus%": "mainhealing",
+                   "Elemental Mastery": "mainem"}
+        if string is None:
+            return keydict
+        else:
+            return keydict[string]
+        
+        
+#%% 
+class ArtifactDB:
+    '''
+    Note that the connection is not saved in this object.
+    This is to ensure that the cursor will always be valid; otherwise, the
+    cursor would be invalidated if the database was closed externally.
+    '''
+    def __init__(self, con, tablename='artifacts'):
+        # Internal tablename
+        self.tablename = tablename
+        
+        self.dictkeys = ["mainhpraw", "mainatkraw", "mainhpperc", "mainatkperc",
+                    "maindefperc", "mainer", "mainem", "maincritrate",
+                    "maincritdmg", "mainhealing", "maincryo",
+                    "mainanemo", "maingeo", "mainpyro",
+                    "mainhydro", "mainelec", "mainphys",
+                    "atkraw", "atkperc", "hpraw", "hpperc",
+                    "critrate", "critdmg", "em", "er",
+                    "defraw", "defperc"] # this is in order, mainstats -> substats
+        
+        # Initialise table
+        self.initTable(con)
+        
+        
+    def initTable(self, con):
+        cur = con.cursor()
+        
+        sql = "create table if not exists " + self.tablename + "(type int not null, "
+        
+        for key in self.dictkeys:
+            sql = sql + key + " real, "
+        
+        sql = sql[:-2] # cut the last two chars off
+        sql = sql + ")"
+            
+        try:
+            cur.execute(sql)
+        except sq.Error as e:
+            print("Failed to initialize artifacts table!")
+            raise(e)
+            
+    def clearTable(self, con):
+        cur = con.cursor()
+        
+        sql = "delete from " + self.tablename
+
+        try:
+            cur.execute(sql)
+            con.commit()
+        except sq.Error as e:
+            print("Failed to delete table contents!")
+            raise(e)
+            
+    def deleteRows(self, ids, con):
+        cur = con.cursor()
+        
+        qmarks = ("?," * len(ids))[:-1]
+        sql = "delete from " + self.tablename + " where rowid in (%s)" % qmarks
+        
+        try:
+            cur.execute(sql, ids)
+            con.commit()
+        except sq.Error as e:
+            print("Failed to delete rows!")
+            raise(e)
+    
+    def save(self, artifact, con):
+        cur = con.cursor()
+        
+        sql = "insert into " + self.tablename + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        
+        l = [artifact.type]
+        l.extend(artifact.mainstatlist)
+        l.extend(artifact.substatlist)
+
+        try:
+            cur.execute(sql, l)
+            con.commit()
+        except sq.Error as e:
+            print("Failed to insert artifact into database!")
+            raise(e)
+            
+    def load(self, con):
+        con.row_factory = sq.Row
+        cur = con.cursor()
+        
+        sql = "select rowid, * from " + self.tablename
+        
+        try:
+            cur.execute(sql)
+            rows = cur.fetchall()
+            artifacts, ids = self.rowsToArtifact(rows)
+            
+            return artifacts, ids
+        except sq.Error as e:
+            print("Failed to load artifacts!")
+            raise(e)
+            
+    def rowsToArtifact(self, rows):
+        artifacts = []
+        ids = []
+        for row in rows:
+            d = dict(row) # convert
+            atype = d.pop('type', None) # remove the type
+            rowid = d.pop('rowid', None) # get the rowid
+            ids.append(rowid)
+            
+            if atype == 1:
+                artifacts.append(Flower.fromDictionary(d))
+            elif atype == 2:
+                artifacts.append(Feather.fromDictionary(d))
+            elif atype == 3:
+                artifacts.append(Timepiece.fromDictionary(d))
+            elif atype == 4:
+                artifacts.append(Goblet.fromDictionary(d))
+            elif atype == 5:
+                artifacts.append(Headpiece.fromDictionary(d))
+                
+        return artifacts, ids
+        
+#%% Unit test
+if __name__ == "__main__":
+    # Test direct ctor
+    feather = Feather(mainatkraw=123, atkperc=20.0, critrate=20.0, critdmg=20.0, er=100)
+    goblet = Goblet(maincryo=46.0, atkperc=20.0, critrate=10.0, critdmg=12.0, em=50)
+    
+    feather.print()
+    goblet.print()
+    
+    # Test dictionary ctor
+    d = {'maincritdmg': 25.0, 'atkperc': 11.0, 'critrate': 12.0, 'em': 13, 'atkraw': 10}
+    head = Headpiece.fromDictionary(d)
+    head.print()
+    
+    # Test failures
+    try:
+        invalidflower = Flower(mainatkraw=10)
+    except Exception as e:
+        print(e)   
+        
+    try:
+        invalidfeather = Feather(maincryo=10.0)
+    except Exception as e:
+        print(e)
+        
+    try:
+        invalidTimepiece = Timepiece(mainer=10.0, mainem=10)
+    except Exception as e:
+        print(e)   
+        
+    try:
+        invalidTimepiece = Timepiece(maincritdmg=10.0)
+    except Exception as e:
+        print(e)   
+        
+    try:
+        invalidGoblet = Goblet(mainhealing=10.0)
+    except Exception as e:
+        print(e)  
+        
+    try:
+        invalidHead = Headpiece(maincryo=10.0)
+    except Exception as e:
+        print(e) 
+        
+    # DB tests
+    con = sq.connect("test.db")
+    artidb = ArtifactDB(con)
+    
+    flower = Flower(mainhpraw=100, atkperc=20)
+    artidb.save(flower, con)
+    
+    feather = Feather(mainatkraw=200, atkperc=14)
+    artidb.save(feather, con)
+    
+    tp = Timepiece(mainatkperc=12, defperc=14)
+    artidb.save(tp, con)
+    
+    gob = Goblet(mainelec=22, defperc=11)
+    artidb.save(gob, con)
+    
+    head = Headpiece(maincritrate=20, defperc=24)
+    artidb.save(head, con)
+    
+    artifacts, ids = artidb.load(con)
+    
+    # check printing
+    [i.print() for i in artifacts]
+    print(ids)
+    
+    # delete some rows
+    delids = [ids[0],ids[2],ids[4]]
+    artidb.deleteRows(delids, con)
+    
+    # check again
+    artifacts, ids = artidb.load(con)
+    # check printing
+    [i.print() for i in artifacts]
+    print(ids)
+    
+    # clear all
+    artidb.clearTable(con)
+    
+    con.close()
+    

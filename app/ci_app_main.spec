@@ -6,12 +6,9 @@ block_cipher = None
 
 a = Analysis(['ci_app_main.py'],
              pathex=['F:\\PycharmProjects\\calculator-impact\\app'],
-             scripts=['F:\\PycharmProjects\\calculator-impact\\scripts\\artifact.py',
-             'F:\\PycharmProjects\\calculator-impact\\scripts\\artifact_slots.py'
-             'F:\\PycharmProjects\\calculator-impact\\scripts\\artifact_db.py'],
              binaries=[],
              datas=[],
-             hiddenimports=[],
+             hiddenimports=['skimage.filters.rank.core_cy_3d'],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],

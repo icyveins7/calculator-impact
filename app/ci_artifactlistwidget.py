@@ -12,10 +12,7 @@ from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtCore import Qt
 
 import sys
-sys.path.append("../scripts")
-from artifact import Artifact
-from artifact_slots import Flower, Feather, Timepiece, Goblet, Headpiece
-from artifact_db import ArtifactDB
+from scripts.artifact import *
 
 class ArtifactListFrame(QFrame):
     def __init__(self, con):
