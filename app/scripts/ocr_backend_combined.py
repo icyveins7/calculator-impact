@@ -140,7 +140,7 @@ def split_substats(substat,plusbutton):
 def read_image_to_artifact(ss_height,ss_width,height,width,image,citaw=None):
     gray_image = rgb2gray(image)
     key = str(ss_height)+'_'+str(ss_width)
-    path= os.path.join(os.getcwd(),"..","scripts","templates",key)
+    path= os.path.join("scripts","templates",key)
     
     lockbutton1=rgb2gray(io.imread(os.path.join(path,'lockbutton.png')))
     lockbutton2=rgb2gray(io.imread(os.path.join(path,'lockbutton2.png')))
