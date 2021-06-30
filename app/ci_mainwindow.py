@@ -167,9 +167,10 @@ class CIMainWindow(QMainWindow):
             
             # paste from file explorer
             if (mime.hasUrls() and self.currentFrame is not None):
-                print(mime.urls()[0].path())
+                print(mime.urls()[0].toLocalFile())
+
                 # open the image file
-                img = imread(mime.urls()[0].path())
+                img = imread(mime.urls()[0].toLocalFile())
                 img = img[:,:,:3]
                 
                 results,myartifact,ax,image = generate_dict(img, currentHeight, currentWidth, citaw=self.citaw) # api

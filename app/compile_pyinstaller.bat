@@ -1,7 +1,7 @@
 set PYSIDE2_PLUGINS=H:\Python\Python39\envs\calcapp\Lib\site-packages\PySide2\plugins
 
 REM pyinstaller ci_app_main.py --hidden-import="skimage.filters.rank.core_cy_3d" --add-binary="%PYSIDE2_PLUGINS%\styles;styles" --add-binary="%PYSIDE2_PLUGINS%\platformthemes;platformthemes" --add-binary="%PYSIDE2_PLUGINS%\platforms;platforms" --upx-exclude qwindows.dll --upx-exclude libegl.dll --upx-exclude vcruntime140.dll
-pyinstaller ci_app_main.py --hidden-import="skimage.filters.rank.core_cy_3d" --add-binary="%PYSIDE2_PLUGINS%\styles;styles" --add-binary="%PYSIDE2_PLUGINS%\platformthemes;platformthemes" --add-binary="%PYSIDE2_PLUGINS%\platforms;platforms" --noupx --exclude-module PyQt5
+pyinstaller ci_app_main.py --hidden-import="skimage.filters.rank.core_cy_3d" --add-binary="%PYSIDE2_PLUGINS%\styles;styles" --add-binary="%PYSIDE2_PLUGINS%\platformthemes;platformthemes" --add-binary="%PYSIDE2_PLUGINS%\platforms;platforms" --exclude-module PyQt5
 
 mkdir dist\tesseract_custom
 copy ..\tesseract_custom\* dist\tesseract_custom\*
