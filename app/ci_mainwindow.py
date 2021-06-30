@@ -8,7 +8,7 @@ Created on Fri May 21 21:01:00 2021
 from PySide2.QtWidgets import QApplication
 from PySide2.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QLabel
 from PySide2.QtCore import QSize, QMimeData, QObject, Signal, Slot  
-from PySide2.QtGui import QKeyEvent, QClipboard, QImage, QIcon
+from PySide2.QtGui import QKeyEvent, QClipboard, QImage, QIcon, QDropEvent
 from PySide2.QtCore import Qt
 
 from ci_artifactwidget import ArtifactWidget, FlowerWidget, FeatherWidget, TimepieceWidget, GobletWidget, HeadpieceWidget
@@ -20,6 +20,7 @@ from ci_comparisonframe import ComparisonFrame
 import sqlite3 as sq
 import sys
 import os
+from skimage.io import imread
 # import matplotlib.pyplot as plt
 
 # sys.path.append(os.path.join(os.getcwd(), "..","cpp"))
@@ -108,6 +109,9 @@ class CIMainWindow(QMainWindow):
         self.navbar.settingsBtn.clicked.connect(self.showSettings)
         self.comparisonFrame.insertRequestSignal.connect(self.artifactlist.getSelected)
         self.artifactlist.insertResponseSignal.connect(self.comparisonFrame.insertArtifacts)
+        
+        # Set droppable events
+        self.setAcceptDrops(True)
 
 
     @Slot()
@@ -147,6 +151,14 @@ class CIMainWindow(QMainWindow):
                 
     def keyPressEvent(self, e: QKeyEvent):
         super().keyPressEvent(e) # call the original one
+        
+        # Get the resolution
+        currentResolution = self.settingsFrame.getResolution().split("x")
+        print("Resolution is ")
+        print(currentResolution)
+        currentHeight = int(currentResolution[1])
+        currentWidth = int(currentResolution[0])
+        
         if (e.key() == Qt.Key_V and (e.modifiers() & Qt.ControlModifier)):
             print("CTRL-V pressed")
             
@@ -154,8 +166,24 @@ class CIMainWindow(QMainWindow):
             mime = clip.mimeData()
             
             # paste from file explorer
-            if (mime.hasUrls()):
-                print('mime has urls.')
+            if (mime.hasUrls() and self.currentFrame is not None):
+                print(mime.urls()[0].path())
+                # open the image file
+                img = imread(mime.urls()[0].path())
+                img = img[:,:,:3]
+                
+                results,myartifact,ax,image = generate_dict(img, currentHeight, currentWidth, citaw=self.citaw) # api
+                # results,myartifact,ax,image = generate_dict(arr, currentHeight, currentWidth) # pytesseract
+                print(results)
+                print(myartifact)
+                self.currentFrame.loadArtifactStats(Artifact.fromDictionary(myartifact)) # you don't actually need the type here, the saving will do it for you
+                
+                # recreate the qimage for display
+                image = np.copy(image[:,:,:3], order='C') # need to copy into c-contiguous
+                qimg = QImage(image, image.shape[1], image.shape[0], QImage.Format_RGB888)
+                self.currentFrame.pasteImage(qimg)
+                
+                
             # paste from clipboard
             elif (mime.hasImage()):
                 img = QImage(mime.imageData())
@@ -171,12 +199,6 @@ class CIMainWindow(QMainWindow):
                                  dtype  = np.uint8)
                     arr = arr[:,:,:3] # clip the A buffer off
                     
-                    # Get the resolution
-                    currentResolution = self.settingsFrame.getResolution().split("x")
-                    print("Resolution is ")
-                    print(currentResolution)
-                    currentHeight = int(currentResolution[1])
-                    currentWidth = int(currentResolution[0])
                     
                     results,myartifact,ax,image = generate_dict(arr, currentHeight, currentWidth, citaw=self.citaw) # api
                     # results,myartifact,ax,image = generate_dict(arr, currentHeight, currentWidth) # pytesseract
@@ -189,5 +211,11 @@ class CIMainWindow(QMainWindow):
                     qimg = QImage(image, image.shape[1], image.shape[0], QImage.Format_RGB888)
                     self.currentFrame.pasteImage(qimg)
                     
-                    
-    
+    def dropEvent(self, e: QDropEvent):
+        super().dropEvent(e)
+        
+        print("Processing drop event")
+        
+        mime = e.mimeData()
+        if (mime.hasUrls()):
+            print("mime has urls.")
