@@ -7,9 +7,9 @@ Created on Fri May 21 21:01:00 2021
 
 from PySide2.QtWidgets import QApplication
 from PySide2.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QLabel
-from PySide2.QtCore import QSize, QMimeData, QObject, Signal, Slot  
+from PySide2.QtCore import QSize, QMimeData, QObject, Signal, Slot, QCoreApplication  
 from PySide2.QtGui import QKeyEvent, QClipboard, QImage, QIcon, QDropEvent
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QThread
 
 from ci_artifactwidget import ArtifactWidget, FlowerWidget, FeatherWidget, TimepieceWidget, GobletWidget, HeadpieceWidget
 from ci_artifactlistwidget import ArtifactListWidget, ArtifactListFrame
@@ -22,6 +22,8 @@ import sys
 import os
 from skimage.io import imread
 # import matplotlib.pyplot as plt
+
+from screen_watcher import ScreenWatchWorker
 
 # sys.path.append(os.path.join(os.getcwd(), "..","cpp"))
 # sys.path.append(os.path.join(os.getcwd(), "..","scripts"))
@@ -40,6 +42,7 @@ from scripts.artifact import *
 
 class CIMainWindow(QMainWindow):
     # deselectFrameSignal = Signal()
+
     def __init__(self):
         super().__init__()
         
@@ -112,6 +115,9 @@ class CIMainWindow(QMainWindow):
         
         # Set droppable events
         self.setAcceptDrops(True)
+
+        # Autocaputre
+        autocapture = False
 
 
     @Slot()
@@ -211,6 +217,25 @@ class CIMainWindow(QMainWindow):
                     image = np.copy(image[:,:,:3], order='C') # need to copy into c-contiguous
                     qimg = QImage(image, image.shape[1], image.shape[0], QImage.Format_RGB888)
                     self.currentFrame.pasteImage(qimg)
+        
+        if (e.key() == Qt.Key_G and (e.modifiers() & Qt.ControlModifier)):
+            print("CTRL-G pressed")
+            print("Auto Capturing Enabled")
+        
+            self.autocapture = True
+            self.thread = QThread()
+            self.worker = ScreenWatchWorker(currentWidth, currentHeight, self.citaw, self.stop_fn)
+            self.worker.moveToThread(self.thread)
+            self.thread.started.connect(self.worker.run)
+            self.worker.new_artifact.connect(self.updateArtifact)
+        
+            self.thread.start()
+            
+        
+        if (e.key() == Qt.Key_H and (e.modifiers() & Qt.ControlModifier)):
+            print("CTRL-H pressed")
+            print("Auto Capturing Disabled")
+            self.autocapture = False
                     
     def dropEvent(self, e: QDropEvent):
         super().dropEvent(e)
@@ -220,3 +245,14 @@ class CIMainWindow(QMainWindow):
         mime = e.mimeData()
         if (mime.hasUrls()):
             print("mime has urls.")
+
+    def updateArtifact(self, new_artifact):
+        print('lala')
+        self.currentFrame.loadArtifactStats(new_artifact)
+        self.currentFrame.on_savebtn_pressed()
+    
+    def stop_fn(self):
+        if not self.autocapture:
+            return True
+        else:
+            return False
